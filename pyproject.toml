@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "contracts"
+version = "0.1.0"
+description = ""
+authors = ["EVM Ore<evmore@cryptuon.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+vyper = "^0.4.0"
+eth-ape = "^0.8.21"
+ape-vyper = "^0.8.7"
+ape-hardhat = "^0.8.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
