@@ -1,6 +1,6 @@
 import random
 from eth_hash.auto import keccak
-from typing import Tuple, List
+from typing import List
 
 def generate_mining_solution(challenge: bytes, difficulty: int, k_values: int = 4) -> bytes:
     """
@@ -26,17 +26,12 @@ def generate_mining_solution(challenge: bytes, difficulty: int, k_values: int = 
     solutions: List[bytes] = []
     target_bits = None
     attempts = 0
-    max_attempts = 1000000
+    max_attempts = 10000000  # Increased attempts for better success rate
     
     while len(solutions) < k_values and attempts < max_attempts:
         attempts += 1
         candidate = random.randbytes(32)
         
-        # Check if candidate would maintain ascending order
-        candidate_int = int.from_bytes(candidate, 'big')
-        if solutions and candidate_int <= int.from_bytes(solutions[-1], 'big'):
-            continue
-            
         hash_input = challenge + candidate
         hash_result = keccak(hash_input)
         bits = int.from_bytes(hash_result, 'big') & mask
@@ -45,8 +40,26 @@ def generate_mining_solution(challenge: bytes, difficulty: int, k_values: int = 
             target_bits = bits
             solutions.append(candidate)
         elif bits == target_bits:
-            solutions.append(candidate)
+            # Check if candidate would maintain ascending order
+            candidate_int = int.from_bytes(candidate, 'big')
+            # Find the correct position to insert to maintain ascending order
+            insert_pos = len(solutions)
+            for i, existing in enumerate(solutions):
+                if candidate_int < int.from_bytes(existing, 'big'):
+                    insert_pos = i
+                    break
+                elif candidate_int == int.from_bytes(existing, 'big'):
+                    # Duplicate value, skip it
+                    insert_pos = -1
+                    break
             
+            if insert_pos >= 0:
+                # Insert at the correct position to maintain ascending order
+                if insert_pos == len(solutions):
+                    solutions.append(candidate)
+                else:
+                    solutions.insert(insert_pos, candidate)
+    
     if len(solutions) < k_values:
         raise RuntimeError(f"Failed to find solution after {max_attempts} attempts")
         

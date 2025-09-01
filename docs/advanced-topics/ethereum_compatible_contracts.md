@@ -1,8 +1,81 @@
+# Ethereum-Compatible EVMORE Contracts
+
+This document shows the specific modifications needed to make the existing EVMORE contracts compatible with Ethereum deployment.
+
+## KeccakCollisionVerifier.vy Modifications
+
+```vy
 # @version ^0.3.10
 
-from vyper.interfaces import ERC20
+############################################
+# KeccakCollision Parameters
+############################################
+N: constant(uint256) = 16  # Number of bits that must match
+K: constant(uint256) = 4   # Number of values needed
+SOLUTION_SIZE: constant(uint256) = 128  # K * 32 bytes
 
-implements: ERC20
+############################################
+# Main Verification Function
+############################################
+@external
+@view
+def verify_solution(
+    challenge: bytes32,
+    solution: Bytes[128],  # K * 32 bytes
+    difficulty: uint256
+) -> bool:
+    """
+    @notice Verifies a KeccakCollision solution
+    @param challenge Current mining challenge
+    @param solution Raw solution bytes (K * 32-byte values)
+    @param difficulty Current mining difficulty
+    @return True if solution is valid
+    """
+    values: DynArray[bytes32, 4] = []
+    
+    # Parse each 32-byte value
+    for i: uint256 in range(K):
+        start_pos: uint256 = i * 32
+        # Extract the full 32-byte value
+        value: bytes32 = convert(slice(solution, start_pos, 32), bytes32)
+        values.append(value)
+        
+        # Check ascending order
+        if i > 0:
+            if convert(values[i], uint256) <= convert(values[i-1], uint256):
+                return False
+    
+    # Create bit mask for matching (optimized for common difficulties)
+    mask: uint256 = 0
+    if difficulty <= 32:
+        mask = shift(1, difficulty) - 1
+    else:
+        # For higher difficulties, compute dynamically
+        mask = MAX_UINT256 >> (256 - difficulty)
+    
+    # Calculate hashes and verify bit matches
+    first_hash: uint256 = 0
+    
+    for i: uint256 in range(K):
+        hash: bytes32 = keccak256(concat(challenge, values[i]))
+        bits: uint256 = convert(hash, uint256) & mask
+        
+        if i == 0:
+            first_hash = bits
+        elif bits != first_hash:
+            return False
+            
+    return True
+```
+
+## EvmoreToken.vy Modifications
+
+```vy
+# @version ^0.3.10
+
+from ethereum.ercs import IERC20
+
+implements: IERC20
 
 # Define MiningProof struct
 struct MiningProof:
@@ -15,14 +88,14 @@ interface IKeccakCollisionVerifier:
 
 # ERC20 Events
 event Transfer:
-    _from: indexed(address)
-    _to: indexed(address)
-    _value: uint256
+    sender: indexed(address)
+    receiver: indexed(address)
+    amount: uint256
 
 event Approval:
-    _owner: indexed(address)
-    _spender: indexed(address)
-    _value: uint256
+    owner: indexed(address)
+    spender: indexed(address)
+    amount: uint256
 
 event Mining:
     miner: indexed(address)
@@ -89,11 +162,11 @@ miner_claimed_epochs: public(HashMap[address, HashMap[uint256, bool]])
 # Current epoch number
 current_epoch: public(uint256)
 
-# Security state variables
+# New state variables for security
 owner: public(address)
 paused: public(bool)
 
-@external
+@deploy
 def __init__(verifier_address: address):
     self.name = "EVM ORE Token"
     self.symbol = "EVMORE"
@@ -123,15 +196,15 @@ def _adjust_difficulty() -> uint256:
     expected_time: uint256 = DIFFICULTY_ADJUSTMENT_INTERVAL * TARGET_BLOCK_TIME
     actual_time: uint256 = block.timestamp - self.difficultyStartTimestamp
     
-    adjustment: uint256 = (actual_time * 100) / expected_time
+    adjustment: uint256 = (actual_time * 100) // expected_time
     
     # Limit adjustment to 4x up or down
     if adjustment > MAX_ADJUSTMENT_FACTOR * 100:
         adjustment = MAX_ADJUSTMENT_FACTOR * 100
-    elif adjustment < 100 / MAX_ADJUSTMENT_FACTOR:
-        adjustment = 100 / MAX_ADJUSTMENT_FACTOR
+    elif adjustment < 100 // MAX_ADJUSTMENT_FACTOR:
+        adjustment = 100 // MAX_ADJUSTMENT_FACTOR
         
-    new_difficulty: uint256 = (self.currentDifficulty * 100) / adjustment
+    new_difficulty: uint256 = (self.currentDifficulty * 100) // adjustment
     
     # Ensure minimum difficulty
     if new_difficulty < 16:
@@ -146,16 +219,16 @@ def _adjust_difficulty_for_congestion() -> uint256:
         
     # Calculate submission rate per block
     time_span: uint256 = self.submissionTimestamps[len(self.submissionTimestamps)-1] - self.submissionTimestamps[0]
-    blocks_span: uint256 = time_span / TARGET_BLOCK_TIME
+    blocks_span: uint256 = time_span // TARGET_BLOCK_TIME
     if blocks_span == 0:
         blocks_span = 1
     submission_count: uint256 = len(self.submissionTimestamps)
-    submission_rate: uint256 = submission_count / blocks_span
+    submission_rate: uint256 = submission_count // blocks_span
     
     # Adjust difficulty based on submission rate
     if submission_rate > TARGET_SUBMISSIONS_PER_BLOCK:
         return self.currentDifficulty + 1
-    elif submission_rate < TARGET_SUBMISSIONS_PER_BLOCK / 2:
+    elif submission_rate < TARGET_SUBMISSIONS_PER_BLOCK // 2:
         return max(self.currentDifficulty - 1, 16)
     
     return self.currentDifficulty
@@ -169,7 +242,7 @@ def submitProof(solution: Bytes[128]) -> bool:
     # Check if contract is paused
     assert not self.paused, "Contract is paused"
     
-    assert self.verifier.verify_solution(
+    assert staticcall self.verifier.verify_solution(
         self.currentChallenge, 
         solution,
         self.currentDifficulty
@@ -177,7 +250,7 @@ def submitProof(solution: Bytes[128]) -> bool:
     
     # Check for duplicate solutions in current epoch
     current_miners: DynArray[address, 100] = self.epoch_miners[self.current_epoch]
-    for i in range(100):
+    for i: uint256 in range(100):
         if i >= len(current_miners):
             break
         existing_proof: MiningProof = self.pendingProofs[current_miners[i]]
@@ -207,14 +280,82 @@ def submitProof(solution: Bytes[128]) -> bool:
     
     return True
 
+# Add batch submission function
+@external
+def submitProofBatch(solutions: DynArray[Bytes[128], 10]) -> bool:
+    """
+    Submit multiple mining proofs in a single transaction
+    """
+    # Check if contract is paused
+    assert not self.paused, "Contract is paused"
+    
+    assert len(solutions) <= 10, "Batch size exceeds limit"
+    
+    # Verify all solutions first to prevent partial processing
+    for i: uint256 in range(len(solutions)):
+        assert staticcall self.verifier.verify_solution(
+            self.currentChallenge, 
+            solutions[i],
+            self.currentDifficulty
+        ), "Invalid solution"
+    
+    # Process valid solutions
+    for i: uint256 in range(len(solutions)):
+        solution: Bytes[128] = solutions[i]
+        
+        # Check for duplicate solutions in current epoch
+        current_miners: DynArray[address, 100] = self.epoch_miners[self.current_epoch]
+        duplicate_found: bool = False
+        for j: uint256 in range(len(current_miners)):
+            if j >= len(current_miners):
+                break
+            existing_proof: MiningProof = self.pendingProofs[current_miners[j]]
+            if existing_proof.solution == solution:
+                duplicate_found = True
+                break
+                
+        assert not duplicate_found, "Duplicate solution"
+        
+        # Store proof (using msg.sender for all submissions in batch)
+        self.pendingProofs[msg.sender] = MiningProof({
+            solution: solution,
+            timestamp: block.timestamp,
+            claimed: False
+        })
+        
+        # Add miner to current epoch if not present
+        miner_in_epoch: bool = False
+        for j: uint256 in range(len(current_miners)):
+            if j >= len(current_miners):
+                break
+            if current_miners[j] == msg.sender:
+                miner_in_epoch = True
+                break
+                
+        if not miner_in_epoch:
+            current_miners.append(msg.sender)
+            self.epoch_miners[self.current_epoch] = current_miners
+            
+            # Update epoch data
+            epoch: EpochData = self.epochs[self.current_epoch]
+            epoch.miner_count += 1
+            self.epochs[self.current_epoch] = epoch
+    
+    # Check if we should transition to new epoch
+    time_since_last: uint256 = block.timestamp - self.lastMiningTimestamp
+    if time_since_last >= TARGET_BLOCK_TIME:
+        self._transition_epoch()
+    
+    return True
+
 @internal
 def _transition_epoch():
     """
     Handle transition to new mining epoch
     """
     # Calculate base reward for current epoch
-    epoch: uint256 = self.blocksMined / HALVING_BLOCKS
-    base_reward: uint256 = INITIAL_REWARD >> epoch
+    epoch: uint256 = self.blocksMined // HALVING_BLOCKS
+    base_reward: uint256 = shift(INITIAL_REWARD, -convert(epoch, int128))
     
     # Store current epoch data
     self.epochs[self.current_epoch] = EpochData({
@@ -252,10 +393,21 @@ def claimReward(epoch: uint256) -> bool:
     assert not self.miner_claimed_epochs[msg.sender][epoch], "Already claimed"
     
     epoch_data: EpochData = self.epochs[epoch]
-    assert msg.sender in self.epoch_miners[epoch], "Not a miner in epoch"
+    miner_in_epoch: bool = False
+    
+    # Check if miner was in this epoch
+    current_miners: DynArray[address, 100] = self.epoch_miners[epoch]
+    for i: uint256 in range(len(current_miners)):
+        if i >= len(current_miners):
+            break
+        if current_miners[i] == msg.sender:
+            miner_in_epoch = True
+            break
+            
+    assert miner_in_epoch, "Not a miner in epoch"
     
     # Calculate individual reward
-    reward: uint256 = epoch_data.total_reward / epoch_data.miner_count
+    reward: uint256 = epoch_data.total_reward // epoch_data.miner_count
     assert self.totalSupply + reward <= MAX_SUPPLY, "Max supply reached"
     
     # Mark as claimed
@@ -274,109 +426,11 @@ def claimReward(epoch: uint256) -> bool:
     
     return True
 
-# Add batch submission function
-@external
-def submitProofBatch(solutions: DynArray[Bytes[128], 10]) -> bool:
-    """
-    Submit multiple mining proofs in a single transaction
-    """
-    # Check if contract is paused
-    assert not self.paused, "Contract is paused"
-    
-    assert len(solutions) <= 10, "Batch size exceeds limit"
-    
-    # Verify all solutions first to prevent partial processing
-    for i in range(10):  # MAX_BATCH_SIZE
-        if i >= len(solutions):
-            break
-        assert self.verifier.verify_solution(
-            self.currentChallenge, 
-            solutions[i],
-            self.currentDifficulty
-        ), "Invalid solution"
-    
-    # Process valid solutions
-    for i in range(10):  # MAX_BATCH_SIZE
-        if i >= len(solutions):
-            break
-        solution: Bytes[128] = solutions[i]
-        
-        # Check for duplicate solutions in current epoch
-        current_miners: DynArray[address, 100] = self.epoch_miners[self.current_epoch]
-        duplicate_found: bool = False
-        for j in range(100):
-            if j >= len(current_miners):
-                break
-            existing_proof: MiningProof = self.pendingProofs[current_miners[j]]
-            if existing_proof.solution == solution:
-                duplicate_found = True
-                break
-                
-        assert not duplicate_found, "Duplicate solution"
-        
-        # Store proof (using msg.sender for all submissions in batch)
-        self.pendingProofs[msg.sender] = MiningProof({
-            solution: solution,
-            timestamp: block.timestamp,
-            claimed: False
-        })
-        
-        # Add miner to current epoch if not present
-        miner_in_epoch: bool = False
-        for j in range(100):
-            if j >= len(current_miners):
-                break
-            if current_miners[j] == msg.sender:
-                miner_in_epoch = True
-                break
-                
-        if not miner_in_epoch:
-            current_miners.append(msg.sender)
-            self.epoch_miners[self.current_epoch] = current_miners
-            
-            # Update epoch data
-            epoch: EpochData = self.epochs[self.current_epoch]
-            epoch.miner_count += 1
-            self.epochs[self.current_epoch] = epoch
-    
-    # Check if we should transition to new epoch
-    time_since_last: uint256 = block.timestamp - self.lastMiningTimestamp
-    if time_since_last >= TARGET_BLOCK_TIME:
-        self._transition_epoch()
-    
-    return True
-
 @internal
 def _mint(to: address, amount: uint256):
     self.totalSupply += amount
     self.balanceOf[to] += amount
     log Transfer(empty(address), to, amount)
-
-@external
-def transfer(_to: address, _value: uint256) -> bool:
-    assert not self.paused, "Contract is paused"
-    assert _to != empty(address), "Invalid recipient"
-    self.balanceOf[msg.sender] -= _value
-    self.balanceOf[_to] += _value
-    log Transfer(msg.sender, _to, _value)
-    return True
-
-@external
-def approve(_spender: address, _value: uint256) -> bool:
-    assert not self.paused, "Contract is paused"
-    self.allowance[msg.sender][_spender] = _value
-    log Approval(msg.sender, _spender, _value)
-    return True
-
-@external
-def transferFrom(_from: address, _to: address, _value: uint256) -> bool:
-    assert not self.paused, "Contract is paused"
-    assert _to != empty(address), "Invalid recipient"
-    self.allowance[_from][msg.sender] -= _value
-    self.balanceOf[_from] -= _value
-    self.balanceOf[_to] += _value
-    log Transfer(_from, _to, _value)
-    return True
 
 # Security functions
 @external
@@ -416,3 +470,46 @@ def withdraw() -> bool:
     assert msg.sender == self.owner, "Only owner can withdraw"
     send(self.owner, self.balance)
     return True
+
+@external
+def transfer(to: address, amount: uint256) -> bool:
+    assert not self.paused, "Contract is paused"
+    assert to != empty(address), "Invalid recipient"
+    self.balanceOf[msg.sender] -= amount
+    self.balanceOf[to] += amount
+    log Transfer(msg.sender, to, amount)
+    return True
+
+@external
+def approve(spender: address, amount: uint256) -> bool:
+    assert not self.paused, "Contract is paused"
+    self.allowance[msg.sender][spender] = amount
+    log Approval(msg.sender, spender, amount)
+    return True
+
+@external
+def transferFrom(sender: address, recipient: address, amount: uint256) -> bool:
+    assert not self.paused, "Contract is paused"
+    assert recipient != empty(address), "Invalid recipient"
+    self.allowance[sender][msg.sender] -= amount
+    self.balanceOf[sender] -= amount
+    self.balanceOf[recipient] += amount
+    log Transfer(sender, recipient, amount)
+    return True
+```
+
+## Deployment Instructions
+
+1. Compile the contracts with Vyper 0.3.10:
+   ```bash
+   vyper KeccakCollisionVerifier.vy -o KeccakCollisionVerifier.bin
+   vyper EvmoreToken.vy -o EvmoreToken.bin
+   ```
+
+2. Deploy KeccakCollisionVerifier first to get its address
+
+3. Deploy EvmoreToken with the verifier address as a parameter
+
+4. Verify contracts on Etherscan for transparency
+
+These modifications make the contracts Ethereum-compatible while preserving the core PoW mechanics of the EVMORE token.

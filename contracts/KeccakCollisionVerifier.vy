@@ -1,4 +1,4 @@
-# @version ^0.4.0
+# @version ^0.3.10
 
 ############################################
 # KeccakCollision Parameters
@@ -27,7 +27,7 @@ def verify_solution(
     values: DynArray[bytes32, 4] = []
     
     # Parse each 32-byte value
-    for i: uint256 in range(K):
+    for i in range(K):
         start_pos: uint256 = i * 32
         # Extract the full 32-byte value
         value: bytes32 = convert(slice(solution, start_pos, 32), bytes32)
@@ -38,13 +38,18 @@ def verify_solution(
             if convert(values[i], uint256) <= convert(values[i-1], uint256):
                 return False
     
-    # Create bit mask for matching
-    mask: uint256 = shift(1, difficulty) - 1
+    # Create bit mask for matching (optimized for common difficulties)
+    mask: uint256 = 0
+    if difficulty <= 32:
+        mask = shift(1, difficulty) - 1
+    else:
+        # For higher difficulties, compute dynamically
+        mask = MAX_UINT256 >> (256 - difficulty)
     
     # Calculate hashes and verify bit matches
     first_hash: uint256 = 0
     
-    for i: uint256 in range(K):
+    for i in range(K):
         hash: bytes32 = keccak256(concat(challenge, values[i]))
         bits: uint256 = convert(hash, uint256) & mask
         
