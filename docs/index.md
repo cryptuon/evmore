@@ -19,6 +19,13 @@ Welcome to the EVMORE documentation. This documentation is organized into severa
 - [Ethereum Compatible Contracts](advanced-topics/ethereum_compatible_contracts.md) - Modified contracts for Ethereum deployment
 - [Final Summary](advanced-topics/final_summary.md) - Conclusions and recommendations
 
+## Operational Documentation
+
+- [Operational Overview](operational/README.md) - Complete guide to production operations
+- [Security Assessment](operational/security-assessment.md) - Comprehensive security analysis and vulnerability report
+- [Deployment Plan](operational/deployment-plan.md) - Step-by-step deployment strategy and procedures
+- [Monitoring Guide](operational/monitoring-guide.md) - Real-time monitoring and maintenance procedures
+
 ## Development Notes
 
 - [Mining Solution Generator Fix](mining-solution-fix.md) - Documentation of fixes to the mining solution generator

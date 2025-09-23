@@ -1,0 +1,21 @@
+{
+  "network": "local",
+  "timestamp": "2025-09-22T16:33:37.398337",
+  "contracts": {
+    "KeccakCollisionVerifier": {
+      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "transaction_hash": "0xfeb622a4f657b2b8dee819cb723fa837b3b731ffcf71e03b454a469ac8e03f4e"
+    },
+    "EvmoreToken": {
+      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "transaction_hash": "0x847803702e5fc765c8c22f054270e13549ff1764cc7b6a9f8615763f7e617a9a"
+    }
+  },
+  "configuration": {
+    "initial_reward": "50000000000000000000",
+    "max_supply": "21000000000000000000000000",
+    "target_block_time": 600,
+    "initial_difficulty": 8,
+    "initial_challenge": "0x34c4fb44caf8c5a4fb52d69642fa2838e6c600e55b3f89c85c005b2a0f23f673"
+  }
+}

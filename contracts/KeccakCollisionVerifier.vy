@@ -1,4 +1,5 @@
 # @version ^0.3.10
+# SPDX-License-Identifier: MIT
 
 ############################################
 # KeccakCollision Parameters
