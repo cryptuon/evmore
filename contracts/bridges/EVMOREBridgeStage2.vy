@@ -1,3 +1,4 @@
+# @version ^0.4.0
 # @title EVMORE Stage 2 Bridge Contract
 # @notice Simple manual bridge for Polygon deployment when treasury reaches 1K EVMORE
 # @dev Simplified security model for Stage 2, upgradeable to Stage 3
@@ -71,7 +72,7 @@ event BridgeConfigUpdated:
 SECONDS_PER_DAY: constant(uint256) = 86400
 BASIS_POINTS: constant(uint256) = 10000
 
-@external
+@deploy
 def __init__(evmore_token_address: address):
     """Initialize Stage 2 bridge (inactive until activated)"""
     self.evmore_token = IEVMOREToken(evmore_token_address)
@@ -137,23 +138,23 @@ def bridgeToPolygon(amount: uint256) -> bytes32:
     assert amount <= self.max_bridge_amount, "Amount exceeds maximum"
 
     # Check daily limits
-    today: uint256 = block.timestamp / SECONDS_PER_DAY
+    today: uint256 = block.timestamp // SECONDS_PER_DAY
     daily_vol: uint256 = self.daily_volume[today]
     user_daily_vol: uint256 = self.user_daily_volume[msg.sender][today]
 
     assert daily_vol + amount <= self.daily_limit, "Daily limit exceeded"
-    assert user_daily_vol + amount <= self.daily_limit / 10, "User daily limit exceeded"  # 10% per user
+    assert user_daily_vol + amount <= self.daily_limit // 10, "User daily limit exceeded"  # 10% per user
 
     # Calculate bridge fee
-    fee_amount: uint256 = amount * self.bridge_fee_rate / BASIS_POINTS
+    fee_amount: uint256 = amount * self.bridge_fee_rate // BASIS_POINTS
     bridge_amount: uint256 = amount - fee_amount
 
     # Transfer tokens to bridge (includes fee)
-    success: bool = self.evmore_token.transferFrom(msg.sender, self, amount)
+    success: bool = extcall self.evmore_token.transferFrom(msg.sender, self, amount)
     assert success, "Token transfer failed"
 
     # Burn the bridge amount (fee stays in contract as revenue)
-    self.evmore_token.bridgeBurn(self, bridge_amount)
+    extcall self.evmore_token.bridgeBurn(self, bridge_amount)
 
     # Generate request ID
     self.requests_count += 1
@@ -241,7 +242,7 @@ def bridgeFromPolygon(
     })
 
     # Mint EVMORE on Ethereum
-    self.evmore_token.bridgeMint(user, amount)
+    extcall self.evmore_token.bridgeMint(user, amount)
 
     # Update statistics
     self.total_bridged_from_polygon += amount
@@ -268,9 +269,9 @@ def withdrawFees():
     """Withdraw accumulated bridge fees (owner only)"""
     assert msg.sender == self.owner, "Only owner"
 
-    fee_balance: uint256 = self.evmore_token.balanceOf(self)
+    fee_balance: uint256 = staticcall self.evmore_token.balanceOf(self)
     if fee_balance > 0:
-        self.evmore_token.transferFrom(self, self.owner, fee_balance)
+        extcall self.evmore_token.transferFrom(self, self.owner, fee_balance)
 
 @external
 def transferOwnership(new_owner: address):
@@ -315,14 +316,14 @@ def getBridgeConfig() -> (uint256, uint256, uint256, uint256, uint256):
 @external
 def getDailyVolume() -> uint256:
     """Get current day bridge volume"""
-    today: uint256 = block.timestamp / SECONDS_PER_DAY
+    today: uint256 = block.timestamp // SECONDS_PER_DAY
     return self.daily_volume[today]
 
 @view
 @external
 def getUserDailyVolume(user: address) -> uint256:
     """Get user's current day bridge volume"""
-    today: uint256 = block.timestamp / SECONDS_PER_DAY
+    today: uint256 = block.timestamp // SECONDS_PER_DAY
     return self.user_daily_volume[user][today]
 
 @view

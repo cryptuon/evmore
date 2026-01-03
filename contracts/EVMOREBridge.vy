@@ -1,3 +1,4 @@
+# @version ^0.4.0
 # @title EVMORE Cross-Chain Bridge
 # @author EVMORE Development Team
 # @notice Secure hub-and-spoke bridge for EVMORE digital gold across EVM networks
@@ -5,7 +6,7 @@
 
 # SPDX-License-Identifier: MIT
 
-from vyper.interfaces import ERC20
+from ethereum.ercs import IERC20
 
 interface IEVMOREToken:
     def balanceOf(user: address) -> uint256: view
@@ -114,7 +115,7 @@ event SecurityConfigUpdated:
     timestamp: uint256
 
 event ChainConfigUpdated:
-    chain: SupportedChains
+    target_chain: SupportedChains
     updated_by: indexed(address)
 
 # Constants
@@ -124,7 +125,7 @@ SECONDS_PER_DAY: constant(uint256) = 86400
 MAX_WITHDRAWAL_DELAY: constant(uint256) = 7 * 86400  # 7 days
 BASIS_POINTS: constant(uint256) = 10000
 
-@external
+@deploy
 def __init__(evmore_token_address: address):
     """Initialize EVMORE bridge with security configurations"""
     self.evmore_token = IEVMOREToken(evmore_token_address)
@@ -220,19 +221,19 @@ def initiateBridge(amount: uint256, target_chain: SupportedChains) -> bytes32:
     assert amount <= self.security_config.max_single_withdrawal, "Amount exceeds security limit"
 
     # Check daily limits
-    today: uint256 = block.timestamp / SECONDS_PER_DAY
+    today: uint256 = block.timestamp // SECONDS_PER_DAY
     user_daily: uint256 = self.user_daily_volume[msg.sender][today]
     chain_daily: uint256 = self.chain_daily_volume[target_chain][today]
 
-    assert user_daily + amount <= chain_config.daily_limit / 10, "User daily limit exceeded"  # 10% per user max
+    assert user_daily + amount <= chain_config.daily_limit // 10, "User daily limit exceeded"  # 10% per user max
     assert chain_daily + amount <= chain_config.daily_limit, "Chain daily limit exceeded"
 
     # Calculate bridge fee
-    fee_amount: uint256 = amount * chain_config.fee_rate / BASIS_POINTS
+    fee_amount: uint256 = amount * chain_config.fee_rate // BASIS_POINTS
     bridge_amount: uint256 = amount - fee_amount
 
     # Lock EVMORE tokens
-    success: bool = self.evmore_token.transferFrom(msg.sender, self, amount)
+    success: bool = extcall self.evmore_token.transferFrom(msg.sender, self, amount)
     assert success, "Token transfer failed"
 
     # Generate unique request ID
@@ -240,7 +241,7 @@ def initiateBridge(amount: uint256, target_chain: SupportedChains) -> bytes32:
     request_id: bytes32 = keccak256(concat(
         convert(msg.sender, bytes32),
         convert(amount, bytes32),
-        convert(target_chain, bytes32),
+        convert(convert(target_chain, uint256), bytes32),
         convert(block.timestamp, bytes32),
         convert(nonce, bytes32)
     ))
@@ -343,7 +344,7 @@ def removeValidator(validator: address):
     self.validators[validator].active = False
 
     # Remove from validator list
-    for i in range(len(self.validator_list)):
+    for i: uint256 in range(len(self.validator_list), bound=20):
         if self.validator_list[i] == validator:
             # Swap with last element and pop
             last_index: uint256 = len(self.validator_list) - 1
@@ -356,7 +357,7 @@ def removeValidator(validator: address):
 
 @external
 def updateChainConfig(
-    chain: SupportedChains,
+    target_chain: SupportedChains,
     active: bool,
     min_amount: uint256,
     max_amount: uint256,
@@ -367,8 +368,8 @@ def updateChainConfig(
     assert msg.sender == self.owner, "Only owner"
     assert fee_rate <= 1000, "Fee rate too high (max 10%)"  # 1000 basis points = 10%
 
-    self.chain_configs[chain] = ChainConfig({
-        chain_id: self.chain_configs[chain].chain_id,  # Keep existing chain ID
+    self.chain_configs[target_chain] = ChainConfig({
+        chain_id: self.chain_configs[target_chain].chain_id,  # Keep existing chain ID
         active: active,
         min_bridge_amount: min_amount,
         max_bridge_amount: max_amount,
@@ -376,7 +377,7 @@ def updateChainConfig(
         fee_rate: fee_rate
     })
 
-    log ChainConfigUpdated(chain, msg.sender)
+    log ChainConfigUpdated(target_chain, msg.sender)
 
 @external
 def updateSecurityConfig(
@@ -439,9 +440,9 @@ def getBridgeRequest(request_id: bytes32) -> BridgeRequest:
 
 @view
 @external
-def getChainConfig(chain: SupportedChains) -> ChainConfig:
+def getChainConfig(target_chain: SupportedChains) -> ChainConfig:
     """Get chain configuration"""
-    return self.chain_configs[chain]
+    return self.chain_configs[target_chain]
 
 @view
 @external
@@ -465,15 +466,15 @@ def getValidatorCount() -> uint256:
 @external
 def getUserDailyVolume(user: address) -> uint256:
     """Get user's bridge volume for current day"""
-    today: uint256 = block.timestamp / SECONDS_PER_DAY
+    today: uint256 = block.timestamp // SECONDS_PER_DAY
     return self.user_daily_volume[user][today]
 
 @view
 @external
-def getChainDailyVolume(chain: SupportedChains) -> uint256:
+def getChainDailyVolume(target_chain: SupportedChains) -> uint256:
     """Get chain's bridge volume for current day"""
-    today: uint256 = block.timestamp / SECONDS_PER_DAY
-    return self.chain_daily_volume[chain][today]
+    today: uint256 = block.timestamp // SECONDS_PER_DAY
+    return self.chain_daily_volume[target_chain][today]
 
 @view
 @external

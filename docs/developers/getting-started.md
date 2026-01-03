@@ -24,23 +24,23 @@ git clone https://github.com/your-org/evmore-contracts
 cd evmore-contracts
 
 # Install Python dependencies
-poetry install
+uv sync
 
 # Install Node.js dependencies
 npm install
 
 # Verify installation
-poetry run ape --version
+uv run ape --version
 ```
 
 ### 2. Deploy Local Digital Gold Network
 
 ```bash
 # Compile the smart contracts
-poetry run ape compile
+uv run ape compile
 
 # Deploy to local network
-poetry run python scripts/deploy_testnet.py
+uv run python scripts/deploy_testnet.py
 ```
 
 You should see output like:
@@ -101,7 +101,7 @@ if current_epoch > 0:
 
 Run the demo:
 ```bash
-poetry run python mining_demo.py
+uv run python mining_demo.py
 ```
 
 ## 🏗️ Build Your First Digital Gold App
@@ -487,7 +487,7 @@ def test_digital_gold_transfers(deployed_contracts):
         assert evmore.balanceOf(recipient) == initial_recipient + transfer_amount
 
 # Run tests
-# poetry run ape test test_digital_gold_features.py -v
+# uv run ape test test_digital_gold_features.py -v
 ```
 
 ## 🚀 Advanced Development Patterns

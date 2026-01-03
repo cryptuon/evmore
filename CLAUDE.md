@@ -8,54 +8,54 @@ EVMORE is a revolutionary digital gold cryptocurrency that uses KeccakCollision 
 
 ## Key Technologies
 
-- **Smart Contracts**: Vyper 0.4.0 (security-focused)
+- **Smart Contracts**: Vyper 0.4.0 (security-focused, migrated from 0.3.10)
 - **Development Framework**: Ape framework with Hardhat
 - **Blockchain**: Ethereum mainnet with multi-chain expansion
 - **Mining Algorithm**: KeccakCollision (ASIC-resistant, memory-hard)
-- **Dependencies**: Poetry for Python, npm for JavaScript tooling
+- **Dependencies**: uv for Python package management
 
 ## Essential Commands
 
 ### Environment Setup
 ```bash
 # Install all dependencies
-poetry install && npm install
+uv sync
 
 # Compile smart contracts
-poetry run ape compile
+uv run ape compile
 
 # Run comprehensive test suite
-poetry run ape test
+uv run ape test
 
 # Deploy to local testnet (development)
-poetry run python scripts/deploy_testnet.py
+uv run python scripts/deploy_testnet.py
 
 # Check deployment readiness
-python3 scripts/deployment_readiness.py
+uv run python scripts/deployment_readiness.py
 ```
 
 ### Development Workflow
 ```bash
 # Run specific test file
-poetry run ape test tests/test_evmore.py
+uv run ape test tests/test_evmore.py
 
 # Deploy Stage 1 (production - requires ETH)
-poetry run python scripts/deploy_stage1.py
+uv run python scripts/deploy_stage1.py
 
 # Generate mining solution (for testing)
-poetry run python scripts/generate_mining_solution.py
+uv run python scripts/generate_mining_solution.py
 
 # Run migration between stages
-poetry run python scripts/migration_manager.py
+uv run python scripts/migration_manager.py
 ```
 
 ### Mining and Testing
 ```bash
 # Demo mining process
-poetry run python scripts/demo_mining.py
+uv run python scripts/demo_mining.py
 
 # Test batch mining submissions
-poetry run python scripts/batch_submission_demo.py
+uv run python scripts/batch_submission_demo.py
 ```
 
 ## Architecture Overview
@@ -117,7 +117,7 @@ Unlike traditional hash-based mining, EVMORE requires finding multiple values th
 - Comprehensive test suite in `tests/` directory
 - Security-focused tests in `test_security_fixes.py`
 - Integration tests in `test_evmore.py`
-- Always run full test suite before deployment: `poetry run ape test`
+- Always run full test suite before deployment: `uv run ape test`
 
 ### Bootstrap Economics
 - Self-funding through mining rewards and bridge fees
@@ -125,12 +125,79 @@ Unlike traditional hash-based mining, EVMORE requires finding multiple values th
 - Community-driven treasury accumulation enables upgrades
 - Fair launch model with no premine
 
-## Deployment Workflow
+## Deployment Guide
 
-1. **Pre-deployment**: Run `python3 scripts/deployment_readiness.py`
-2. **Stage 1**: Deploy with `poetry run python scripts/deploy_stage1.py`
-3. **Mining**: Start with `scripts/demo_mining.py` or custom miners
-4. **Migration**: Automatic via `scripts/migration_manager.py` when thresholds met
+### Prerequisites
+1. **Ethereum wallet** with deployer private key
+2. **ETH for gas** (~0.02-0.05 ETH for Stage 1 deployment)
+3. **RPC endpoint** (Infura, Alchemy, or own node)
+
+### Deployment Process
+
+#### Step 1: Configure Network
+Edit `ape-config.yaml` to add mainnet configuration:
+```yaml
+ethereum:
+  mainnet:
+    default_provider: alchemy  # or infura
+    transaction_acceptance_timeout: 600
+```
+
+Set environment variables:
+```bash
+export WEB3_ALCHEMY_API_KEY="your-api-key"
+export DEPLOYER_PRIVATE_KEY="your-private-key"
+```
+
+#### Step 2: Pre-deployment Verification
+```bash
+# Verify all contracts compile
+uv run ape compile
+
+# Run test suite
+uv run ape test
+
+# Check deployment readiness
+uv run python scripts/deployment_readiness.py
+```
+
+#### Step 3: Deploy Stage 1 (Mainnet)
+```bash
+# Deploy KeccakCollisionVerifier + EvmoreToken
+uv run python scripts/deploy_stage1.py --network ethereum:mainnet
+```
+
+This deploys:
+1. `KeccakCollisionVerifier` - Mining verification contract
+2. `EvmoreToken` - Main token contract (linked to verifier)
+
+#### Step 4: Verify Deployment
+```bash
+# Verify contracts on Etherscan
+uv run ape verify <verifier_address> --network ethereum:mainnet
+uv run ape verify <token_address> --network ethereum:mainnet
+```
+
+#### Step 5: Post-deployment
+1. **Start mining** - Use `scripts/demo_mining.py` or build custom miner
+2. **Monitor treasury** - Track EVMORE accumulation for Stage 2 trigger
+3. **Community launch** - Announce contract addresses, begin fair distribution
+
+### Deployment Costs (Estimated)
+| Stage | Gas Cost | USD (@ $2000 ETH, 30 gwei) |
+|-------|----------|---------------------------|
+| Stage 1 | ~2M gas | ~$120 |
+| Stage 2 | ~1.5M gas | ~$90 |
+| Stage 3 | ~3M gas | ~$180 |
+| Stage 4 | ~5M gas | ~$300 |
+
+### Security Checklist Before Mainnet
+- [ ] External security audit completed
+- [ ] All tests passing
+- [ ] Deployer key secured (hardware wallet recommended)
+- [ ] Multi-sig setup for owner functions (recommended)
+- [ ] Emergency contacts established
+- [ ] Monitoring infrastructure ready
 
 ## File Structure Context
 
@@ -139,6 +206,15 @@ Unlike traditional hash-based mining, EVMORE requires finding multiple values th
 - `scripts/`: Deployment and management scripts
 - `docs/`: Comprehensive architecture and strategy documentation
 - `tests/`: Security and integration test suites
-- `DEPLOYMENT_READY.md`: Complete launch readiness summary
 
 The codebase is production-ready with comprehensive documentation, automated deployment scripts, and a clear path from $500 launch to revolutionary federated mining architecture.
+
+## Quick Reference
+
+| Task | Command |
+|------|---------|
+| Install deps | `uv sync` |
+| Compile | `uv run ape compile` |
+| Test | `uv run ape test` |
+| Deploy testnet | `uv run python scripts/deploy_testnet.py` |
+| Deploy mainnet | `uv run python scripts/deploy_stage1.py --network ethereum:mainnet` |

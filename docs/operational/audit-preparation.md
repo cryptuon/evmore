@@ -176,7 +176,7 @@ KeccakCollisionVerifier.vy
 #### Security Test Coverage
 ```bash
 # Run security-specific tests
-poetry run ape test tests/test_basic_security.py -v
+uv run ape test tests/test_basic_security.py -v
 
 # Test Categories:
 ✅ Contract deployment with security features
@@ -194,7 +194,7 @@ poetry run ape test tests/test_basic_security.py -v
 #### Integration Test Coverage
 ```bash
 # Run integration tests
-poetry run ape test tests/test_evmore.py -v
+uv run ape test tests/test_evmore.py -v
 
 # Core functionality tests:
 ✅ Token deployment and initialization
@@ -254,7 +254,7 @@ poetry run ape test tests/test_evmore.py -v
 vyper 0.3.10
 
 # Compilation command
-poetry run ape compile
+uv run ape compile
 
 # Output
 SUCCESS: 'local project' compiled.
@@ -263,7 +263,7 @@ SUCCESS: 'local project' compiled.
 ### Test Network Deployment
 ```bash
 # Enhanced deployment script
-poetry run python scripts/deploy_testnet.py
+uv run python scripts/deploy_testnet.py
 
 # Deployment validation includes:
 ✅ Contract deployment success

@@ -1,9 +1,9 @@
-# @version ^0.3.10
+# @version ^0.4.0
 # SPDX-License-Identifier: MIT
 
-from vyper.interfaces import ERC20
+from ethereum.ercs import IERC20
 
-implements: ERC20
+implements: IERC20
 
 # Define MiningProof struct
 struct MiningProof:
@@ -136,7 +136,7 @@ bridge_contract: address
 bridge_mint_enabled: bool
 bridge_burn_enabled: bool
 
-@external
+@deploy
 def __init__(verifier_address: address):
     self.name = "EVM ORE Token"
     self.symbol = "EVMORE"
@@ -173,15 +173,15 @@ def _adjust_difficulty() -> uint256:
     expected_time: uint256 = DIFFICULTY_ADJUSTMENT_INTERVAL * TARGET_BLOCK_TIME
     actual_time: uint256 = block.timestamp - self.difficultyStartTimestamp
     
-    adjustment: uint256 = (actual_time * 100) / expected_time
+    adjustment: uint256 = (actual_time * 100) // expected_time
     
     # Limit adjustment to 4x up or down
     if adjustment > MAX_ADJUSTMENT_FACTOR * 100:
         adjustment = MAX_ADJUSTMENT_FACTOR * 100
-    elif adjustment < 100 / MAX_ADJUSTMENT_FACTOR:
-        adjustment = 100 / MAX_ADJUSTMENT_FACTOR
+    elif adjustment < 100 // MAX_ADJUSTMENT_FACTOR:
+        adjustment = 100 // MAX_ADJUSTMENT_FACTOR
         
-    new_difficulty: uint256 = (self.currentDifficulty * 100) / adjustment
+    new_difficulty: uint256 = (self.currentDifficulty * 100) // adjustment
 
     # Ensure minimum difficulty
     if new_difficulty < 16:
@@ -200,16 +200,16 @@ def _adjust_difficulty_for_congestion() -> uint256:
         
     # Calculate submission rate per block
     time_span: uint256 = self.submissionTimestamps[len(self.submissionTimestamps)-1] - self.submissionTimestamps[0]
-    blocks_span: uint256 = time_span / TARGET_BLOCK_TIME
+    blocks_span: uint256 = time_span // TARGET_BLOCK_TIME
     if blocks_span == 0:
         blocks_span = 1
     submission_count: uint256 = len(self.submissionTimestamps)
-    submission_rate: uint256 = submission_count / blocks_span
+    submission_rate: uint256 = submission_count // blocks_span
     
     # Adjust difficulty based on submission rate
     if submission_rate > TARGET_SUBMISSIONS_PER_BLOCK:
         return self.currentDifficulty + 1
-    elif submission_rate < TARGET_SUBMISSIONS_PER_BLOCK / 2:
+    elif submission_rate < TARGET_SUBMISSIONS_PER_BLOCK // 2:
         return max(self.currentDifficulty - 1, 16)
     
     return self.currentDifficulty
@@ -223,7 +223,7 @@ def submitProof(solution: Bytes[128]) -> bool:
     # Check if contract is paused
     assert not self.paused, "Contract is paused"
     
-    assert self.verifier.verify_solution(
+    assert staticcall self.verifier.verify_solution(
         self.currentChallenge,
         solution,
         self.currentDifficulty
@@ -270,7 +270,7 @@ def _transition_epoch():
     Handle transition to new mining epoch
     """
     # Calculate base reward for current epoch
-    epoch: uint256 = self.blocksMined / HALVING_BLOCKS
+    epoch: uint256 = self.blocksMined // HALVING_BLOCKS
     base_reward: uint256 = INITIAL_REWARD >> epoch
     
     # Store current epoch data
@@ -322,13 +322,13 @@ def claimReward(epoch: uint256) -> bool:
     assert msg.sender in self.epoch_miners[epoch], "Not a miner in epoch"
     
     # Calculate individual reward with fair remainder distribution
-    base_reward: uint256 = epoch_data.total_reward / epoch_data.miner_count
+    base_reward: uint256 = epoch_data.total_reward // epoch_data.miner_count
     remainder: uint256 = epoch_data.total_reward % epoch_data.miner_count
 
     # Get miner index for remainder distribution
     miner_index: uint256 = 0
     epoch_miners: DynArray[address, 100] = self.epoch_miners[epoch]
-    for i in range(100):
+    for i: uint256 in range(100):
         if i >= len(epoch_miners):
             break
         if epoch_miners[i] == msg.sender:
@@ -380,13 +380,13 @@ def submitProofBatch(solutions: DynArray[Bytes[128], 10]) -> bool:
     # Verify all solutions and check uniqueness efficiently
     solution_hashes: DynArray[bytes32, 10] = []
     solutions_len: uint256 = len(solutions)
-    for i in range(10):
+    for i: uint256 in range(10):
         if i >= solutions_len:
             break
         solution: Bytes[128] = solutions[i]
 
         # Verify solution
-        assert self.verifier.verify_solution(
+        assert staticcall self.verifier.verify_solution(
             self.currentChallenge,
             solution,
             self.currentDifficulty
@@ -397,7 +397,7 @@ def submitProofBatch(solutions: DynArray[Bytes[128], 10]) -> bool:
         assert not self.used_solution_hashes[solution_hash], "Solution already used"
 
         # Check for duplicates within this batch
-        for j in range(10):
+        for j: uint256 in range(10):
             if j >= len(solution_hashes):
                 break
             assert solution_hashes[j] != solution_hash, "Duplicate in batch"
@@ -405,7 +405,7 @@ def submitProofBatch(solutions: DynArray[Bytes[128], 10]) -> bool:
         solution_hashes.append(solution_hash)
 
     # Mark all solutions as used (all or nothing approach)
-    for i in range(10):
+    for i: uint256 in range(10):
         if i >= len(solution_hashes):
             break
         self.used_solution_hashes[solution_hashes[i]] = True
@@ -577,7 +577,7 @@ def bridgeMint(to: address, amount: uint256) -> bool:
     assert amount > 0, "Invalid amount"
 
     # Check max supply
-    assert self.totalSupply + amount <= self.MAX_SUPPLY, "Exceeds max supply"
+    assert self.totalSupply + amount <= MAX_SUPPLY, "Exceeds max supply"
 
     # Mint tokens
     self.totalSupply += amount
@@ -619,9 +619,10 @@ def withdraw() -> bool:
     # Perform withdrawal using checks-effects-interactions pattern
     balance_to_withdraw: uint256 = self.balance
 
-    # Clear reentrancy lock before external call
+    # External call
+    send(self.owner, balance_to_withdraw)
+
+    # Clear reentrancy lock after external call completes
     self.reentrancy_lock = False
 
-    # External call at the end
-    send(self.owner, balance_to_withdraw)
     return True

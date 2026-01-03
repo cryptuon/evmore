@@ -1,4 +1,4 @@
-# @version ^0.3.10
+# @version ^0.4.0
 # SPDX-License-Identifier: MIT
 
 ############################################
@@ -28,7 +28,7 @@ def verify_solution(
     values: DynArray[bytes32, 4] = []
     
     # Parse each 32-byte value
-    for i in range(K):
+    for i: uint256 in range(K):
         start_pos: uint256 = i * 32
         # Extract the full 32-byte value
         value: bytes32 = convert(slice(solution, start_pos, 32), bytes32)
@@ -45,12 +45,12 @@ def verify_solution(
         mask = shift(1, difficulty) - 1
     else:
         # For higher difficulties, compute dynamically
-        mask = MAX_UINT256 >> (256 - difficulty)
+        mask = max_value(uint256) >> (256 - difficulty)
     
     # Calculate hashes and verify bit matches
     first_hash: uint256 = 0
     
-    for i in range(K):
+    for i: uint256 in range(K):
         hash: bytes32 = keccak256(concat(challenge, values[i]))
         bits: uint256 = convert(hash, uint256) & mask
         

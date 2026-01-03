@@ -41,13 +41,13 @@ git clone https://github.com/your-org/evmore-contracts
 cd evmore-contracts
 
 # Install Python dependencies
-poetry install
+uv sync
 
 # Install Node.js dependencies
 npm install
 
 # Compile contracts
-poetry run ape compile
+uv run ape compile
 ```
 
 ### 2. Deploy Local Development Environment

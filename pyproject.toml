@@ -1,17 +1,23 @@
-[tool.poetry]
-name = "contracts"
+[project]
+name = "evmore-contracts"
 version = "0.1.0"
-description = ""
-authors = ["EVM Ore<evmore@cryptuon.com>"]
+description = "EVMORE Digital Gold - KeccakCollision proof-of-work mining contracts"
 readme = "README.md"
+requires-python = ">=3.12"
+authors = [
+    { name = "EVM Ore", email = "evmore@cryptuon.com" }
+]
+dependencies = [
+    "vyper>=0.4.0",
+    "eth-ape>=0.8.21",
+    "ape-vyper>=0.8.7",
+    "ape-hardhat>=0.8.4",
+]
 
-[tool.poetry.dependencies]
-python = "^3.12"
-vyper = "^0.4.0"
-eth-ape = "^0.8.21"
-ape-vyper = "^0.8.7"
-ape-hardhat = "^0.8.4"
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+]
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.hatch.build.targets.wheel]
+packages = ["scripts"]

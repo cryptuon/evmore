@@ -1,10 +1,13 @@
+# @version ^0.4.0
 # @title Wrapped EVMORE (wEVMORE) - Polygon Contract
 # @notice ERC-20 wrapped EVMORE for Polygon network (Stage 2)
 # @dev Simple wrapped token with bridge integration
 
 # SPDX-License-Identifier: MIT
 
-implements: ERC20
+from ethereum.ercs import IERC20
+
+implements: IERC20
 
 # ERC-20 standard events
 event Transfer:
@@ -55,7 +58,7 @@ daily_burns: HashMap[uint256, uint256]  # day -> amount
 # Constants
 SECONDS_PER_DAY: constant(uint256) = 86400
 
-@external
+@deploy
 def __init__():
     """Initialize wrapped EVMORE on Polygon"""
     self.name = "Wrapped EVMORE"
@@ -100,7 +103,7 @@ def bridgeMint(
     assert amount > 0, "Invalid amount"
 
     # Check daily limits
-    today: uint256 = block.timestamp / SECONDS_PER_DAY
+    today: uint256 = block.timestamp // SECONDS_PER_DAY
     daily_mints_today: uint256 = self.daily_mints[today]
     assert daily_mints_today + amount <= self.daily_mint_limit, "Daily mint limit exceeded"
 
@@ -123,7 +126,7 @@ def bridgeBurn(amount: uint256, ethereum_recipient: address):
     assert ethereum_recipient != empty(address), "Invalid recipient"
 
     # Check daily limits
-    today: uint256 = block.timestamp / SECONDS_PER_DAY
+    today: uint256 = block.timestamp // SECONDS_PER_DAY
     daily_burns_today: uint256 = self.daily_burns[today]
     assert daily_burns_today + amount <= self.daily_burn_limit, "Daily burn limit exceeded"
 
@@ -224,7 +227,7 @@ def getDailyLimits() -> (uint256, uint256):
 @external
 def getDailyUsage() -> (uint256, uint256):
     """Get today's mint and burn usage"""
-    today: uint256 = block.timestamp / SECONDS_PER_DAY
+    today: uint256 = block.timestamp // SECONDS_PER_DAY
     return (self.daily_mints[today], self.daily_burns[today])
 
 @view

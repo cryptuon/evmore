@@ -12,7 +12,7 @@
 
 1. Install dependencies:
    ```bash
-   poetry install
+   uv sync
    npm install
    ```
 
