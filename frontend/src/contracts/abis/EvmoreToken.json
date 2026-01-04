@@ -1,0 +1,43 @@
+[
+  "function name() view returns (string)",
+  "function symbol() view returns (string)",
+  "function decimals() view returns (uint8)",
+  "function totalSupply() view returns (uint256)",
+  "function balanceOf(address owner) view returns (uint256)",
+  "function allowance(address owner, address spender) view returns (uint256)",
+  "function transfer(address to, uint256 value) returns (bool)",
+  "function approve(address spender, uint256 value) returns (bool)",
+  "function transferFrom(address from, address to, uint256 value) returns (bool)",
+
+  "function currentChallenge() view returns (bytes32)",
+  "function currentDifficulty() view returns (uint256)",
+  "function current_epoch() view returns (uint256)",
+  "function blocksMined() view returns (uint256)",
+  "function lastMiningTimestamp() view returns (uint256)",
+  "function lastDifficultyAdjustment() view returns (uint256)",
+
+  "function submitProof(bytes solution) returns (bool)",
+  "function submitProofBatch(bytes[] solutions) returns (bool)",
+  "function claimReward(uint256 epoch) returns (bool)",
+
+  "function epochs(uint256 epoch) view returns (uint256 blockNumber, uint256 totalReward, uint256 minerCount, uint256 claimedCount, uint256 timestamp)",
+  "function miner_claimed_epochs(address miner, uint256 epoch) view returns (bool)",
+  "function pendingProofs(address miner) view returns (bytes solution, uint256 timestamp, bool claimed)",
+
+  "function owner() view returns (address)",
+  "function paused() view returns (bool)",
+  "function bridge_contract() view returns (address)",
+  "function bridge_mint_enabled() view returns (bool)",
+  "function bridge_burn_enabled() view returns (bool)",
+
+  "event Transfer(address indexed from, address indexed to, uint256 value)",
+  "event Approval(address indexed owner, address indexed spender, uint256 value)",
+  "event Mining(address indexed miner, uint256 reward, bytes solution)",
+  "event ProofSubmitted(address indexed miner, uint256 indexed epoch, bytes32 indexed solutionHash)",
+  "event RewardClaimed(address indexed miner, uint256 indexed epoch, uint256 amount)",
+  "event EpochTransition(uint256 indexed oldEpoch, uint256 indexed newEpoch, uint256 totalReward, uint256 minerCount)",
+  "event DifficultyAdjusted(uint256 oldDifficulty, uint256 newDifficulty, uint256 blockNumber)",
+  "event ChallengeGenerated(bytes32 indexed newChallenge, uint256 blockNumber)",
+  "event Paused(address account)",
+  "event Unpaused(address account)"
+]

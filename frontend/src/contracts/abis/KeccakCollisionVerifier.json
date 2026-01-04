@@ -1,0 +1,3 @@
+[
+  "function verify_solution(bytes32 challenge, bytes solution, uint256 difficulty) view returns (bool)"
+]

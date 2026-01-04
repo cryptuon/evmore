@@ -1,0 +1,14 @@
+[
+  "function bridgeToPolygon(uint256 amount) returns (bytes32)",
+  "function getBridgeRequest(bytes32 requestId) view returns (address user, uint256 amount, uint256 timestamp, uint256 nonce, bool processed, uint8 direction)",
+  "function getBridgeStats() view returns (uint256 toPolygon, uint256 fromPolygon, uint256 requests, bool active)",
+  "function getBridgeConfig() view returns (uint256 min, uint256 max, uint256 dailyLimit, uint256 delay, uint256 feeRate)",
+  "function getDailyVolume() view returns (uint256)",
+  "function getUserDailyVolume(address user) view returns (uint256)",
+  "function isBridgeActive() view returns (bool)",
+  "function operator() view returns (address)",
+  "function owner() view returns (address)",
+
+  "event BridgeToPolygon(address indexed user, uint256 amount, uint256 fee, bytes32 indexed requestId, uint256 nonce)",
+  "event BridgeFromPolygon(address indexed user, uint256 amount, bytes32 indexed requestId, bytes32 indexed polygonTxHash)"
+]
