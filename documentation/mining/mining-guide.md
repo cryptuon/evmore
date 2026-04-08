@@ -139,10 +139,10 @@ git clone https://github.com/evmore/evmore-contracts
 cd evmore-contracts
 
 # Install Python dependencies
-poetry install
+uv sync
 
 # Verify installation
-poetry run python --version
+uv run python --version
 ```
 
 ### Step 3: Configure Your Miner
@@ -160,12 +160,12 @@ NUM_WORKERS = 4  # Number of CPU cores to use
 
 **Solo Mining:**
 ```bash
-poetry run python scripts/mining/optimized_miner.py
+uv run python scripts/mining/optimized_miner.py
 ```
 
 **Pool Mining:**
 ```bash
-poetry run python scripts/mining/mining_pool.py --pool POOL_ADDRESS --wallet YOUR_WALLET
+uv run python scripts/mining/mining_pool.py --pool POOL_ADDRESS --wallet YOUR_WALLET
 ```
 
 ### Step 5: Monitor Your Mining

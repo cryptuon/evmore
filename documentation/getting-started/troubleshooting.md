@@ -154,13 +154,13 @@ Solutions to common problems when using EVMORE.
 
 1. **Check dependencies**
    ```bash
-   poetry --version  # Should show version
+   uv --version  # Should show version
    python --version  # Python 3.12+
    ```
 
 2. **Reinstall dependencies**
    ```bash
-   poetry install --no-cache
+   uv sync
    ```
 
 3. **Check for error messages**

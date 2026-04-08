@@ -33,6 +33,20 @@ Total Units: 21,000,000,000,000,000,000,000,000 (21 × 10^24)
 
 Like Bitcoin, EVMORE's block reward halves approximately every 4 years:
 
+```mermaid
+graph LR
+    E1["Era 1<br/>Years 0-4<br/>50 EVMORE/block<br/>10.5M supply"]
+    E2["Era 2<br/>Years 4-8<br/>25 EVMORE/block<br/>15.75M supply"]
+    E3["Era 3<br/>Years 8-12<br/>12.5 EVMORE/block<br/>18.375M supply"]
+    E4["Era 4<br/>Years 12-16<br/>6.25 EVMORE/block<br/>19.69M supply"]
+    E5["Era 5+<br/>Continues halving<br/>Approaches 21M"]
+
+    E1 -->|"Halving"| E2
+    E2 -->|"Halving"| E3
+    E3 -->|"Halving"| E4
+    E4 -->|"Halving"| E5
+```
+
 | Era | Years | Block Reward | New Supply | Total Supply | % Mined |
 |-----|-------|--------------|------------|--------------|---------|
 | 1 | 0-4 | 50 EVMORE | 10.5M | 10.5M | 50% |

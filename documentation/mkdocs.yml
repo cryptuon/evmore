@@ -1,0 +1,96 @@
+site_name: EVMORE Documentation
+site_description: "EVMORE: Proof-of-work digital gold built on Ethereum with KeccakCollision mining"
+site_url: https://evmore.github.io/evmore/
+repo_url: https://github.com/evmore/evmore-contracts
+repo_name: evmore/evmore-contracts
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: amber
+      accent: deep orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: amber
+      accent: deep orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+  icon:
+    repo: fontawesome/brands/github
+  font:
+    text: Inter
+    code: JetBrains Mono
+
+docs_dir: .
+site_dir: ../site
+
+markdown_extensions:
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - What is EVMORE?: getting-started/what-is-evmore.md
+    - Quick Start: getting-started/quick-start.md
+    - Token Economics: getting-started/economics.md
+    - FAQ: getting-started/faq.md
+    - Glossary: getting-started/glossary.md
+    - Troubleshooting: getting-started/troubleshooting.md
+  - Mining:
+    - Mining Guide: mining/mining-guide.md
+    - KeccakCollision Algorithm: mining/mining-algorithm.md
+  - Architecture:
+    - Overview: architecture/overview.md
+    - Staged Deployment: architecture/staged-deployment.md
+    - Cross-Chain Bridge: architecture/cross-chain-bridge.md
+    - Federated Mining: architecture/federated-mining.md
+  - Smart Contracts:
+    - Contract Reference: contracts/reference.md
+  - Developers:
+    - Getting Started: developers/getting-started.md
+    - Contributing: developers/contributing.md
+  - Community:
+    - Resources: community/resources.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/evmore/evmore-contracts
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/evmore
+    - icon: fontawesome/brands/x-twitter
+      link: https://twitter.com/EVMOREGold
+
+copyright: Copyright &copy; 2024-2026 EVMORE Contributors

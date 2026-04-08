@@ -1,3 +1,6 @@
+# MkDocs
+site/
+
 # Ape stuff
 .build/
 .cache/
