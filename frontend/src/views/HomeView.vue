@@ -1,13 +1,27 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useWalletStore } from '@/stores/wallet'
+import { useNetworkStore } from '@/stores/network'
 import { storeToRefs } from 'pinia'
 import BaseButton from '@/components/common/BaseButton.vue'
 import BaseCard from '@/components/common/BaseCard.vue'
 
 const router = useRouter()
 const walletStore = useWalletStore()
+const networkStore = useNetworkStore()
 const { isConnected, isConnecting } = storeToRefs(walletStore)
+const { overview, selectedChain } = storeToRefs(networkStore)
+
+const supplyText = computed(() => {
+  if (!overview.value) return '—'
+  try {
+    const whole = BigInt(overview.value.total_supply) / 10n ** 18n
+    return whole.toLocaleString()
+  } catch {
+    return '—'
+  }
+})
 
 const features = [
   {
@@ -75,10 +89,30 @@ async function handleConnect() {
           <BaseButton
             variant="secondary"
             size="lg"
-            @click="router.push('/stats')"
+            @click="router.push('/dashboard')"
           >
-            View Stats
+            Launch Dashboard
           </BaseButton>
+        </div>
+
+        <!-- Live public stats strip -->
+        <div v-if="overview" class="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+          <div class="p-3 rounded-lg bg-white/60 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700">
+            <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Network</p>
+            <p class="text-sm font-semibold text-gray-900 dark:text-white mt-1">{{ selectedChain?.name ?? '—' }}</p>
+          </div>
+          <div class="p-3 rounded-lg bg-white/60 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700">
+            <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Supply</p>
+            <p class="text-sm font-semibold text-gray-900 dark:text-white mt-1">{{ supplyText }} EVMORE</p>
+          </div>
+          <div class="p-3 rounded-lg bg-white/60 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700">
+            <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Blocks</p>
+            <p class="text-sm font-semibold text-gray-900 dark:text-white mt-1">{{ overview.blocks_mined }}</p>
+          </div>
+          <div class="p-3 rounded-lg bg-white/60 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700">
+            <p class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Difficulty</p>
+            <p class="text-sm font-semibold text-gray-900 dark:text-white mt-1">{{ overview.current_difficulty }}</p>
+          </div>
         </div>
       </div>
     </section>

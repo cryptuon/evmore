@@ -1,0 +1,22 @@
+---
+import Head from '../components/Head.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <Head
+    title={title}
+    description="EVMORE Dashboard"
+    noindex={true}
+  />
+  <body class="min-h-screen">
+    <slot />
+  </body>
+</html>

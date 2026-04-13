@@ -1,0 +1,51 @@
+---
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { name: 'Home', path: '/' },
+  { name: 'Tokenomics', path: '/tokenomics/' },
+  { name: 'Whitepaper', path: '/whitepaper/' },
+  { name: 'Blog', path: '/blog/' },
+];
+---
+
+<header class="sticky top-0 z-40 bg-white/80 dark:bg-evmore-dark/80 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <a href="/" class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+          <span class="text-lg font-bold text-gray-900">E</span>
+        </div>
+        <span class="text-xl font-bold text-gray-900 dark:text-white">EVMORE</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-1">
+        {navLinks.map((link) => (
+          <a
+            href={link.path}
+            class:list={[
+              'px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+              currentPath === link.path || (link.path !== '/' && currentPath.startsWith(link.path))
+                ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-800',
+            ]}
+          >
+            {link.name}
+          </a>
+        ))}
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <a href="https://docs.cryptuon.com/evmore" target="_blank" rel="noopener" class="hidden sm:inline-flex text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+          Docs
+        </a>
+        <a
+          href="/app/dashboard/"
+          class="btn-primary text-sm px-4 py-2"
+        >
+          Launch App
+        </a>
+      </div>
+    </div>
+  </div>
+</header>

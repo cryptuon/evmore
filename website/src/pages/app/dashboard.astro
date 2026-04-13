@@ -1,0 +1,8 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import DashboardApp from '../../components/vue/DashboardApp.vue';
+---
+
+<DashboardLayout title="Dashboard">
+  <DashboardApp client:only="vue" />
+</DashboardLayout>

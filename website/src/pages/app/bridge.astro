@@ -1,0 +1,8 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import BridgeApp from '../../components/vue/BridgeApp.vue';
+---
+
+<DashboardLayout title="Bridge">
+  <BridgeApp client:only="vue" />
+</DashboardLayout>

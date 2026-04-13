@@ -218,3 +218,11 @@ The codebase is production-ready with comprehensive documentation, automated dep
 | Test | `uv run ape test` |
 | Deploy testnet | `uv run python scripts/deploy_testnet.py` |
 | Deploy mainnet | `uv run python scripts/deploy_stage1.py --network ethereum:mainnet` |
+| Dashboard dev (frontend) | `cd frontend && npm install && npm run dev` |
+| Dashboard dev (backend) | `cd backend && cargo run` (see `docs/DASHBOARD.md` for env vars) |
+| Dashboard Docker build | `docker build -t evmore-dashboard .` |
+| Dashboard CapRover deploy | `caprover deploy` (target: `evmore.cryptuon.com`) |
+
+## Dashboard
+
+The Vue 3 frontend (`frontend/`) and Rust axum backend (`backend/`) are packaged together as a single CapRover container via `Dockerfile` + `captain-definition`. The backend is stateless (in-memory cache only), serves `/api/*` and falls back to the built SPA. See `docs/DASHBOARD.md` for endpoints, env vars, and deploy steps.

@@ -1,0 +1,88 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  ogType?: string;
+  canonicalUrl?: string;
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  seoKeywords?: string[];
+}
+
+const {
+  title,
+  description,
+  ogImage = '/og-image.png',
+  ogType = 'website',
+  canonicalUrl,
+  noindex = false,
+  jsonLd,
+  seoKeywords,
+} = Astro.props;
+
+const siteName = 'EVMORE';
+const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
+const canonical = canonicalUrl || new URL(Astro.url.pathname, Astro.site).href;
+const ogImageUrl = new URL(ogImage, Astro.site).href;
+
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'EVMORE',
+  url: 'https://evmore.cryptuon.com',
+  description: 'EVMORE is a fair-launch digital gold cryptocurrency with KeccakCollision proof-of-work mining on Ethereum.',
+  logo: ogImageUrl,
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'EVMORE',
+  url: 'https://evmore.cryptuon.com',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: 'https://evmore.cryptuon.com/blog/?q={search_term_string}',
+    'query-input': 'required name=search_term_string',
+  },
+};
+
+const allJsonLd = [orgSchema, websiteSchema, ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [])];
+---
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+  {seoKeywords && <meta name="keywords" content={seoKeywords.join(', ')} />}
+  <link rel="canonical" href={canonical} />
+  {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+  <!-- Open Graph -->
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={ogImageUrl} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:type" content={ogType} />
+  <meta property="og:site_name" content={siteName} />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={fullTitle} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImageUrl} />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+  <!-- JSON-LD -->
+  {allJsonLd.map((schema) => (
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  ))}
+</head>

@@ -1,0 +1,95 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  date: Date;
+  updated?: Date;
+  author: string;
+  tags: string[];
+  image?: string;
+  imageAlt?: string;
+  seoKeywords?: string[];
+  slug: string;
+}
+
+const { title, description, date, updated, author, tags, image, imageAlt, seoKeywords, slug } = Astro.props;
+
+const articleJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description,
+  datePublished: date.toISOString(),
+  ...(updated ? { dateModified: updated.toISOString() } : { dateModified: date.toISOString() }),
+  author: {
+    '@type': 'Person',
+    name: author,
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'EVMORE',
+    url: 'https://evmore.cryptuon.com',
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': new URL(`/blog/${slug}/`, 'https://evmore.cryptuon.com').href,
+  },
+  ...(image ? { image: new URL(image, 'https://evmore.cryptuon.com').href } : {}),
+};
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Blog', href: '/blog/' },
+  { label: title },
+];
+
+const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+const formattedUpdated = updated?.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  ogType="article"
+  ogImage={image || '/og-image-blog.png'}
+  jsonLd={articleJsonLd}
+  seoKeywords={seoKeywords}
+>
+  <article class="max-w-3xl mx-auto">
+    <Breadcrumbs items={breadcrumbs} />
+
+    <header class="mb-10">
+      <div class="flex flex-wrap gap-2 mb-4">
+        {tags.map((tag) => (
+          <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300">
+            {tag}
+          </span>
+        ))}
+      </div>
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
+        {title}
+      </h1>
+      <p class="text-lg text-gray-600 dark:text-gray-400 mb-4">
+        {description}
+      </p>
+      <div class="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+        <span>By {author}</span>
+        <span>|</span>
+        <time datetime={date.toISOString()}>{formattedDate}</time>
+        {formattedUpdated && (
+          <>
+            <span>|</span>
+            <span>Updated {formattedUpdated}</span>
+          </>
+        )}
+      </div>
+    </header>
+
+    <div class="prose max-w-none">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>

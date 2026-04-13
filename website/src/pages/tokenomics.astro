@@ -1,0 +1,100 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import ComparisonTable from '../components/ComparisonTable.astro';
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Tokenomics' },
+];
+
+const halvingSchedule = [
+  ['0 - 210,000', '50 EVMORE', '10,500,000', '50.00%'],
+  ['210,001 - 420,000', '25 EVMORE', '15,750,000', '75.00%'],
+  ['420,001 - 630,000', '12.5 EVMORE', '18,375,000', '87.50%'],
+  ['630,001 - 840,000', '6.25 EVMORE', '19,687,500', '93.75%'],
+  ['840,001 - 1,050,000', '3.125 EVMORE', '20,343,750', '96.88%'],
+  ['1,050,001+', '1.5625 EVMORE', '...', '...'],
+];
+---
+
+<BaseLayout
+  title="EVMORE Tokenomics"
+  description="EVMORE has a fixed 21 million supply cap with Bitcoin-style halving every 210,000 blocks. Initial block reward is 50 EVMORE with ASIC-resistant KeccakCollision mining."
+  seoKeywords={['EVMORE tokenomics', 'crypto halving schedule', 'deflationary token', '21 million supply', 'ERC-20 mining token']}
+>
+  <Breadcrumbs items={breadcrumbs} />
+
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">EVMORE Tokenomics</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400 mb-10">
+      EVMORE replicates Bitcoin's proven scarcity model as an ERC-20 token on Ethereum. A fixed 21 million supply cap,
+      deterministic halving schedule, and ASIC-resistant mining create digital gold that is programmable, verifiable, and decentralized.
+    </p>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Supply Model</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="card p-5 text-center">
+          <p class="text-2xl font-bold text-primary-500">21,000,000</p>
+          <p class="text-sm text-gray-500 mt-1">Maximum Supply</p>
+        </div>
+        <div class="card p-5 text-center">
+          <p class="text-2xl font-bold text-primary-500">50</p>
+          <p class="text-sm text-gray-500 mt-1">Initial Block Reward</p>
+        </div>
+        <div class="card p-5 text-center">
+          <p class="text-2xl font-bold text-primary-500">210,000</p>
+          <p class="text-sm text-gray-500 mt-1">Blocks per Halving</p>
+        </div>
+        <div class="card p-5 text-center">
+          <p class="text-2xl font-bold text-primary-500">~10 min</p>
+          <p class="text-sm text-gray-500 mt-1">Target Block Time</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Halving Schedule</h2>
+      <p class="text-gray-600 dark:text-gray-400 mb-4">
+        Like Bitcoin, EVMORE's block reward halves at regular intervals, creating predictable deflation and increasing scarcity over time.
+      </p>
+      <ComparisonTable
+        headers={['Block Range', 'Block Reward', 'Cumulative Supply', '% of Max']}
+        rows={halvingSchedule}
+      />
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Mining Economics</h2>
+      <div class="prose max-w-none">
+        <p>EVMORE uses the KeccakCollision proof-of-work algorithm, which is memory-hard and resistant to ASIC mining hardware. This keeps mining accessible to anyone with a standard CPU or GPU, preventing the centralization that has affected Bitcoin and other SHA-256 mined tokens.</p>
+        <p>The difficulty adjusts dynamically to target a 10-minute block time. When more miners join the network, difficulty increases. When miners leave, it decreases. This self-balancing mechanism ensures consistent token emission regardless of total hash power.</p>
+        <p>All mining solutions are verified on-chain by the KeccakCollisionVerifier smart contract, enabling trustless integration with DeFi protocols, DAOs, and other smart contracts.</p>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Fair Distribution</h2>
+      <div class="prose max-w-none">
+        <p><strong>Zero premine.</strong> No tokens were created before public mining began.</p>
+        <p><strong>Zero ICO.</strong> No tokens were sold to investors or the public.</p>
+        <p><strong>Zero allocation.</strong> No tokens are reserved for founders, advisors, or the treasury. Every single EVMORE token is mined through proof-of-work by the community.</p>
+        <p>This makes EVMORE one of the most fairly distributed ERC-20 tokens in existence. The only way to acquire EVMORE is to mine it or trade for it on the open market.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Staged Deployment</h2>
+      <div class="prose max-w-none">
+        <p>EVMORE uses a self-funding 4-stage deployment model where the treasury accumulated from mining fees triggers each expansion:</p>
+        <ul>
+          <li><strong>Stage 1</strong> - Ethereum-only mining (current)</li>
+          <li><strong>Stage 2</strong> - Polygon bridge activation (at 1K EVMORE treasury)</li>
+          <li><strong>Stage 3</strong> - Multi-chain expansion to Arbitrum and Base (at 10K EVMORE treasury)</li>
+          <li><strong>Stage 4</strong> - Federated mining across all chains (at 100K EVMORE treasury)</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

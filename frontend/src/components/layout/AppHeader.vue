@@ -2,13 +2,25 @@
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useWalletStore } from '@/stores/wallet'
+import { useNetworkStore } from '@/stores/network'
 import { storeToRefs } from 'pinia'
 import ThemeToggle from '@/components/common/ThemeToggle.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import BaseBadge from '@/components/common/BaseBadge.vue'
 
 const walletStore = useWalletStore()
+const networkStore = useNetworkStore()
 const { isConnected, shortAddress, chainName, isSupportedNetwork, isConnecting } = storeToRefs(walletStore)
+const { chains, selectedKey } = storeToRefs(networkStore)
+
+async function handleChainChange(e: Event) {
+  const key = (e.target as HTMLSelectElement).value
+  await networkStore.setChain(key)
+  const target = networkStore.selectedChain
+  if (walletStore.isConnected && target) {
+    await walletStore.switchNetwork(target.chain_id as any)
+  }
+}
 
 const isMobileMenuOpen = ref(false)
 
@@ -61,6 +73,21 @@ function disconnectWallet() {
 
         <!-- Right side actions -->
         <div class="flex items-center gap-3">
+          <!-- Network switcher -->
+          <div v-if="chains.length" class="hidden sm:flex items-center">
+            <label class="sr-only" for="network-switcher">Network</label>
+            <select
+              id="network-switcher"
+              :value="selectedKey"
+              @change="handleChainChange"
+              class="text-xs font-medium rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            >
+              <option v-for="c in chains" :key="c.key" :value="c.key">
+                {{ c.name }}{{ c.is_testnet ? ' (test)' : '' }}
+              </option>
+            </select>
+          </div>
+
           <ThemeToggle />
 
           <!-- Wallet connection -->

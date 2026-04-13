@@ -1,0 +1,8 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import WalletApp from '../../components/vue/WalletApp.vue';
+---
+
+<DashboardLayout title="Wallet">
+  <WalletApp client:only="vue" />
+</DashboardLayout>

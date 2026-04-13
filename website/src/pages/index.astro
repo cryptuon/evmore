@@ -1,0 +1,159 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog'))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const faqItems = [
+  { q: 'What is EVMORE?', a: 'EVMORE is a fair-launch ERC-20 digital gold cryptocurrency on Ethereum that uses KeccakCollision proof-of-work mining. It has a fixed 21 million supply cap with Bitcoin-style halving.' },
+  { q: 'How do I mine EVMORE?', a: 'EVMORE uses the KeccakCollision algorithm, which is memory-hard and ASIC-resistant. You can mine using a CPU or GPU by finding collision patterns that satisfy the current difficulty requirement.' },
+  { q: 'What makes EVMORE different from Bitcoin?', a: 'EVMORE is an ERC-20 token on Ethereum with ASIC-resistant mining, smart contract programmability, and a staged cross-chain architecture. Unlike Bitcoin, mining solutions are verified on-chain.' },
+  { q: 'Is EVMORE a fair launch?', a: 'Yes. EVMORE has zero premine, no ICO, and no venture capital funding. All tokens are mined by the community through proof-of-work.' },
+  { q: 'What is the EVMORE halving schedule?', a: 'The initial block reward is 50 EVMORE. Rewards halve every 210,000 blocks, identical to Bitcoin\'s scarcity model, until the 21 million supply cap is reached.' },
+  { q: 'What is KeccakCollision mining?', a: 'KeccakCollision is a memory-hard proof-of-work algorithm where miners must find multiple values whose keccak256 hashes share matching bit patterns. This resists ASIC optimization and keeps mining accessible.' },
+];
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqItems.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.a,
+    },
+  })),
+};
+
+const softwareJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'EVMORE',
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Ethereum',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+};
+---
+
+<BaseLayout
+  title="EVMORE - Digital Gold on Ethereum"
+  description="EVMORE is a fair-launch ERC-20 cryptocurrency with a 21 million supply cap, KeccakCollision ASIC-resistant mining, and Bitcoin-style halving. No premine, no ICO. Mine digital gold on Ethereum."
+  seoKeywords={['digital gold cryptocurrency', 'EVMORE', 'fair launch crypto', 'ASIC resistant mining', 'ERC-20 mining token', 'proof of work Ethereum', 'KeccakCollision']}
+  jsonLd={[faqJsonLd, softwareJsonLd]}
+>
+  <!-- Hero -->
+  <section class="text-center py-16 md:py-24">
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight">
+        <span class="text-gradient">EVMORE</span><br />
+        Digital Gold on Ethereum
+      </h1>
+      <p class="text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
+        A fair-launch proof-of-work cryptocurrency with ASIC-resistant KeccakCollision mining,
+        a 21 million supply cap, and Bitcoin-style halving. No premine. No ICO.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="/app/dashboard/" class="btn-primary text-base px-6 py-3">Launch Dashboard</a>
+        <a href="/blog/" class="btn-secondary text-base px-6 py-3">Read Articles</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Token Economics -->
+  <section class="py-12">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-white text-center mb-8">Token Economics</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+      <div class="card p-6 text-center">
+        <p class="text-3xl font-bold text-primary-500">21M</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Max Supply</p>
+      </div>
+      <div class="card p-6 text-center">
+        <p class="text-3xl font-bold text-primary-500">50</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Initial Block Reward</p>
+      </div>
+      <div class="card p-6 text-center">
+        <p class="text-3xl font-bold text-primary-500">210K</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Blocks per Halving</p>
+      </div>
+      <div class="card p-6 text-center">
+        <p class="text-3xl font-bold text-primary-500">10min</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Target Block Time</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="py-12">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-white text-center mb-8">Why EVMORE?</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+      <div class="card p-6">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">ASIC-Resistant Mining</h3>
+        <p class="text-gray-600 dark:text-gray-400">KeccakCollision is memory-hard, preventing ASIC dominance and keeping mining accessible to everyone with a CPU or GPU.</p>
+      </div>
+      <div class="card p-6">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Fair Launch</h3>
+        <p class="text-gray-600 dark:text-gray-400">Zero premine, zero ICO, zero venture funding. Every token is earned through proof-of-work mining by the community.</p>
+      </div>
+      <div class="card p-6">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">On-Chain Verification</h3>
+        <p class="text-gray-600 dark:text-gray-400">Mining solutions are verified directly on-chain by smart contracts, enabling trustless integration with DeFi and other protocols.</p>
+      </div>
+      <div class="card p-6">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Cross-Chain Vision</h3>
+        <p class="text-gray-600 dark:text-gray-400">A staged architecture progressively expands from Ethereum-only to federated cross-chain mining across Polygon, Arbitrum, and Base.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-12">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-white text-center mb-8">Frequently Asked Questions</h2>
+    <div class="max-w-3xl mx-auto space-y-4">
+      {faqItems.map((item) => (
+        <details class="card p-5 group">
+          <summary class="cursor-pointer font-semibold text-gray-900 dark:text-white list-none flex items-center justify-between">
+            {item.q}
+            <span class="text-gray-400 group-open:rotate-180 transition-transform">&#9660;</span>
+          </summary>
+          <p class="mt-3 text-gray-600 dark:text-gray-400">{item.a}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <!-- Recent Articles -->
+  {posts.length > 0 && (
+    <section class="py-12">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Latest Articles</h2>
+        <a href="/blog/" class="text-primary-600 dark:text-primary-400 text-sm font-medium hover:underline">View all &rarr;</a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {posts.map((post) => (
+          <a href={`/blog/${post.slug}/`} class="card p-6 hover:border-primary-500 dark:hover:border-primary-500 transition-colors">
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              {post.data.tags.slice(0, 2).map((tag) => (
+                <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300">
+                  {tag}
+                </span>
+              ))}
+            </div>
+            <h3 class="font-semibold text-gray-900 dark:text-white mb-2">{post.data.title}</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{post.data.description}</p>
+            <time class="block mt-3 text-xs text-gray-500" datetime={post.data.date.toISOString()}>
+              {post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+            </time>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+</BaseLayout>

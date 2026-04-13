@@ -12,6 +12,14 @@ site/
 .python-version
 __pycache__
 
+# Rust
+backend/target/
+
+# Astro
+website/.astro/
+website/dist/
+website/node_modules/
+
 # Logs
 logs
 *.log

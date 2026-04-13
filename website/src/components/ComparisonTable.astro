@@ -1,0 +1,36 @@
+---
+interface Props {
+  headers: string[];
+  rows: string[][];
+}
+
+const { headers, rows } = Astro.props;
+---
+
+<div class="overflow-x-auto my-8">
+  <table class="w-full border-collapse">
+    <thead>
+      <tr>
+        {headers.map((h) => (
+          <th class="bg-gray-100 dark:bg-gray-800 text-left px-4 py-3 font-semibold text-gray-900 dark:text-white border-b-2 border-gray-200 dark:border-gray-700 text-sm">
+            {h}
+          </th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row) => (
+        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+          {row.map((cell, i) => (
+            <td class:list={[
+              'px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm',
+              i === 0 ? 'font-medium text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300',
+            ]}>
+              {cell}
+            </td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>

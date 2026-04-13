@@ -1,0 +1,117 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Whitepaper' },
+];
+
+const scholarlyJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ScholarlyArticle',
+  name: 'EVMORE: Digital Gold on Ethereum',
+  author: { '@type': 'Organization', name: 'EVMORE' },
+  description: 'Technical whitepaper describing the EVMORE digital gold cryptocurrency, KeccakCollision proof-of-work algorithm, and staged cross-chain deployment architecture.',
+  url: 'https://evmore.cryptuon.com/whitepaper/',
+};
+---
+
+<BaseLayout
+  title="EVMORE Whitepaper"
+  description="Read the EVMORE whitepaper covering the KeccakCollision proof-of-work algorithm, digital gold economics, and staged cross-chain deployment architecture."
+  seoKeywords={['EVMORE whitepaper', 'KeccakCollision algorithm', 'digital gold cryptocurrency whitepaper', 'proof of work ERC-20']}
+  jsonLd={scholarlyJsonLd}
+>
+  <Breadcrumbs items={breadcrumbs} />
+
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">EVMORE Whitepaper</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400 mb-10">
+      The EVMORE whitepaper describes the design and implementation of a digital gold cryptocurrency on Ethereum
+      using KeccakCollision proof-of-work mining.
+    </p>
+
+    <div class="card p-8 mb-10">
+      <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Abstract</h2>
+      <p class="text-gray-600 dark:text-gray-400 mb-4">
+        EVMORE introduces a digital gold token on Ethereum that combines Bitcoin's proven scarcity model with
+        smart contract programmability and ASIC-resistant mining. The KeccakCollision algorithm requires miners to
+        find collision patterns in keccak256 hashes, creating a memory-hard proof-of-work that resists hardware
+        specialization while enabling on-chain verification.
+      </p>
+      <p class="text-gray-600 dark:text-gray-400 mb-4">
+        A 4-stage deployment architecture allows the network to bootstrap from a single Ethereum deployment and
+        progressively expand to federated cross-chain mining as the community-driven treasury grows. With a fixed
+        21 million supply cap, Bitcoin-style halving, and zero premine, EVMORE delivers the economic properties
+        of physical gold in a decentralized, programmable form.
+      </p>
+    </div>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Key Contributions</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="card p-5">
+          <h3 class="font-semibold text-gray-900 dark:text-white mb-2">KeccakCollision Algorithm</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">A novel proof-of-work scheme based on finding collision patterns in keccak256 hashes, providing memory-hardness and ASIC resistance while being efficiently verifiable on-chain.</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold text-gray-900 dark:text-white mb-2">On-Chain Mining Verification</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Mining solutions are verified by a smart contract, enabling trustless integration with DeFi protocols and eliminating the need for centralized mining pools.</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Staged Cross-Chain Architecture</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">A self-funding deployment model that progressively expands from Ethereum-only to federated mining across multiple chains as the treasury grows organically.</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Digital Gold Economics</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">21 million supply cap, Bitcoin-style halving every 210,000 blocks, zero premine, and difficulty-adjusted 10-minute block targets create predictable scarcity.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Table of Contents</h2>
+      <div class="prose max-w-none">
+        <ol>
+          <li>Introduction and Motivation</li>
+          <li>Related Work: Bitcoin, Ethereum, and PoW Tokens</li>
+          <li>KeccakCollision Algorithm Design
+            <ul>
+              <li>Collision Pattern Requirements</li>
+              <li>Memory Hardness Properties</li>
+              <li>On-Chain Verification</li>
+            </ul>
+          </li>
+          <li>Token Economics
+            <ul>
+              <li>Supply Schedule and Halving</li>
+              <li>Difficulty Adjustment</li>
+              <li>Mining Reward Distribution</li>
+            </ul>
+          </li>
+          <li>Smart Contract Architecture
+            <ul>
+              <li>EvmoreToken Contract</li>
+              <li>KeccakCollisionVerifier Contract</li>
+              <li>Bridge Contracts</li>
+            </ul>
+          </li>
+          <li>Staged Deployment Model</li>
+          <li>Security Analysis</li>
+          <li>Conclusion</li>
+        </ol>
+      </div>
+    </section>
+
+    <div class="card p-8 text-center">
+      <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Download the Full Whitepaper</h2>
+      <p class="text-gray-600 dark:text-gray-400 mb-4">
+        The complete technical whitepaper is available as a PDF document.
+      </p>
+      <a href="/evmore-whitepaper.pdf" class="btn-primary text-base px-6 py-3 inline-flex" download>
+        Download PDF
+      </a>
+    </div>
+  </div>
+</BaseLayout>

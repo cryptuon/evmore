@@ -1,0 +1,27 @@
+{
+  "name": "evmore-website",
+  "type": "module",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^5.7.10",
+    "@astrojs/vue": "^5.1.4",
+    "@astrojs/sitemap": "^3.7.2",
+    "vue": "^3.5.24",
+    "pinia": "^3.0.4",
+    "ethers": "^6.16.0",
+    "@heroicons/vue": "^2.2.0"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.1.18",
+    "@tailwindcss/postcss": "^4.1.18",
+    "@tailwindcss/forms": "^0.5.11",
+    "autoprefixer": "^10.4.23",
+    "postcss": "^8.5.6",
+    "typescript": "~5.9.3"
+  }
+}

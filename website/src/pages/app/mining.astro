@@ -1,0 +1,8 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import MiningApp from '../../components/vue/MiningApp.vue';
+---
+
+<DashboardLayout title="Mining">
+  <MiningApp client:only="vue" />
+</DashboardLayout>

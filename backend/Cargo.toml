@@ -1,0 +1,25 @@
+[package]
+name = "evmore-dashboard"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+axum = "0.7"
+tokio = { version = "1", features = ["full"] }
+tower = "0.5"
+tower-http = { version = "0.6", features = ["cors", "compression-full", "trace", "fs"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+anyhow = "1"
+thiserror = "1"
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+moka = { version = "0.12", features = ["future"] }
+alloy = { version = "0.5", features = ["providers", "contract", "sol-types", "rpc-types", "transports", "transport-http", "network"] }
+url = "2"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true
