@@ -6,6 +6,10 @@
 FROM node:20-alpine AS website-build
 WORKDIR /build
 
+# Install frontend deps (needed for tsconfig resolution via path alias)
+COPY frontend/package.json frontend/package-lock.json* ./frontend/
+RUN cd frontend && npm ci
+
 # Copy frontend source (consumed by Astro via path alias)
 COPY frontend/ ./frontend/
 
