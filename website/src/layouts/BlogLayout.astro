@@ -17,6 +17,8 @@ interface Props {
 
 const { title, description, date, updated, author, tags, image, imageAlt, seoKeywords, slug } = Astro.props;
 
+const siteUrl = Astro.site!.href.replace(/\/$/, '');
+
 const articleJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Article',
@@ -31,13 +33,13 @@ const articleJsonLd = {
   publisher: {
     '@type': 'Organization',
     name: 'EVMORE',
-    url: 'https://evmore.cryptuon.com',
+    url: siteUrl,
   },
   mainEntityOfPage: {
     '@type': 'WebPage',
-    '@id': new URL(`/blog/${slug}/`, 'https://evmore.cryptuon.com').href,
+    '@id': new URL(`/blog/${slug}/`, Astro.site).href,
   },
-  ...(image ? { image: new URL(image, 'https://evmore.cryptuon.com').href } : {}),
+  ...(image ? { image: new URL(image, Astro.site).href } : {}),
 };
 
 const breadcrumbs = [

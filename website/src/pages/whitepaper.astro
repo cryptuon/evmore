@@ -13,7 +13,7 @@ const scholarlyJsonLd = {
   name: 'EVMORE: Digital Gold on Ethereum',
   author: { '@type': 'Organization', name: 'EVMORE' },
   description: 'Technical whitepaper describing the EVMORE digital gold cryptocurrency, KeccakCollision proof-of-work algorithm, and staged cross-chain deployment architecture.',
-  url: 'https://evmore.cryptuon.com/whitepaper/',
+  url: new URL('/whitepaper/', Astro.site).href,
 };
 ---
 

@@ -23,6 +23,7 @@ const {
 
 const siteName = 'EVMORE';
 const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
+const siteUrl = Astro.site!.href.replace(/\/$/, '');
 const canonical = canonicalUrl || new URL(Astro.url.pathname, Astro.site).href;
 const ogImageUrl = new URL(ogImage, Astro.site).href;
 
@@ -30,7 +31,7 @@ const orgSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'EVMORE',
-  url: 'https://evmore.cryptuon.com',
+  url: siteUrl,
   description: 'EVMORE is a fair-launch digital gold cryptocurrency with KeccakCollision proof-of-work mining on Ethereum.',
   logo: ogImageUrl,
 };
@@ -39,10 +40,10 @@ const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'EVMORE',
-  url: 'https://evmore.cryptuon.com',
+  url: siteUrl,
   potentialAction: {
     '@type': 'SearchAction',
-    target: 'https://evmore.cryptuon.com/blog/?q={search_term_string}',
+    target: `${siteUrl}/blog/?q={search_term_string}`,
     'query-input': 'required name=search_term_string',
   },
 };
