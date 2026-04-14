@@ -25,7 +25,7 @@ RUN npm run build
 ############################
 # 2. Build Rust backend
 ############################
-FROM rust:1.85-slim AS backend-build
+FROM rust:1.86-slim AS backend-build
 WORKDIR /build
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
