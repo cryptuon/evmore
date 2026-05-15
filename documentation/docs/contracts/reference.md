@@ -27,8 +27,11 @@ The core token contract. Implements ERC-20 and integrates the mining reward syst
 | `INITIAL_REWARD` | 50 * 10^18 | 50 EVMORE per block |
 | `HALVING_BLOCKS` | 210,000 | Blocks between halvings (~4 years) |
 | `MAX_SUPPLY` | 21,000,000 * 10^18 | Hard supply cap |
-| `TARGET_BLOCK_TIME` | 600 | 10-minute target |
+| `TARGET_BLOCK_TIME` | 600 | 10-minute target (seconds) |
 | `DIFFICULTY_ADJUSTMENT_INTERVAL` | 2,016 | Blocks between adjustments |
+| `MAX_ADJUSTMENT_FACTOR` | 4 | Max 4x change per difficulty adjustment |
+| `SUBMISSION_WINDOW` | 100 | Rolling window (blocks) for congestion measurement |
+| `TARGET_SUBMISSIONS_PER_BLOCK` | 10 | Congestion target |
 
 ### ERC-20 Functions
 
@@ -70,6 +73,8 @@ The core token contract. Implements ERC-20 and integrates the mining reward syst
 | `unpause()` | Unpause the contract (owner only) |
 | `transferOwnership(new_owner: address)` | Initiate ownership transfer (owner only) |
 | `acceptOwnership()` | Accept ownership transfer (pending owner only) |
+| `renounceOwnership()` | Renounce ownership permanently (owner only) |
+| `withdraw()` | Withdraw accidentally-sent ETH from the contract (owner only) |
 
 ### Events
 
@@ -77,9 +82,15 @@ The core token contract. Implements ERC-20 and integrates the mining reward syst
 |-------|-------------|
 | `Transfer(from, to, value)` | Token transfer |
 | `Approval(owner, spender, value)` | Spending approval |
-| `ProofSubmitted(miner, epoch)` | Mining proof accepted |
+| `Mining(miner, reward, solution)` | Mining reward emitted |
+| `ProofSubmitted(miner, epoch, solution_hash)` | Mining proof accepted |
 | `RewardClaimed(miner, epoch, amount)` | Reward claimed |
-| `EpochTransition(epoch, reward, difficulty)` | New epoch started |
+| `EpochTransition(old_epoch, new_epoch, total_reward, miner_count)` | New epoch started |
+| `DifficultyAdjusted(old_difficulty, new_difficulty, block_number)` | Difficulty changed |
+| `ChallengeGenerated(new_challenge, block_number)` | New mining challenge issued |
+| `Paused(account)` / `Unpaused(account)` | Contract pause state changed |
+| `OwnershipTransferStarted(previous_owner, new_owner)` | Two-step ownership initiated |
+| `OwnershipTransferred(previous_owner, new_owner)` | Ownership transfer accepted |
 
 ---
 
@@ -102,7 +113,7 @@ A stateless verification contract with a single view function.
 5. Verify all masked hash results are identical
 6. Return `true` if all checks pass
 
-**Gas optimization:** Precomputed masks for common difficulties (8, 16, 24, 32 bits).
+**Gas optimization:** Inline mask computation -- `(1 << difficulty) - 1` for difficulty <= 32, otherwise `max_value(uint256) >> (256 - difficulty)`.
 
 ---
 

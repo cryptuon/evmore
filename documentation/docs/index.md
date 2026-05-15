@@ -67,4 +67,4 @@
 1. Check the [FAQ](getting-started/faq.md)
 2. Read [Troubleshooting](getting-started/troubleshooting.md)
 3. Join the community on [Discord](https://discord.gg/evmore)
-4. Open an issue on [GitHub](https://github.com/evmore/evmore-contracts/issues)
+4. Open an issue on [GitHub](https://github.com/cryptuon/evmore/issues)

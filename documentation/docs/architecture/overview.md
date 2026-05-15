@@ -107,7 +107,7 @@ A pure verification contract with a single view function.
 - `verify_solution(challenge, solution, difficulty) -> bool`
 - Parses 4 x 32-byte values from the 128-byte solution
 - Verifies ascending order and matching bit patterns
-- Precomputed masks for common difficulties (8, 16, 24, 32 bits)
+- Inline mask computation, branch-optimized for difficulty <= 32
 - Gas-optimized for on-chain verification
 
 ### EVMOREBridge.vy (482 lines)

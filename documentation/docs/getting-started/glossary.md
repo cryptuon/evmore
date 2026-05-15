@@ -408,4 +408,4 @@ The maximum supply of EVMORE tokens, matching Bitcoin's supply cap.
 
 ---
 
-*This glossary covers the most common terms. For technical details, see the [Developer Documentation](../../docs/developers/README.md).*
+*This glossary covers the most common terms. For technical details, see the [Developer Documentation](https://github.com/cryptuon/evmore/blob/main/docs/developers/README.md).*

@@ -17,8 +17,8 @@ Set up your development environment, compile contracts, run tests, and deploy EV
 
 ```bash
 # Clone the repository
-git clone https://github.com/evmore/evmore-contracts
-cd evmore-contracts
+git clone https://github.com/cryptuon/evmore
+cd evmore
 
 # Install Python dependencies
 uv sync
@@ -117,7 +117,7 @@ uv run python scripts/deploy_stage1.py --network ethereum:mainnet
 ## Project Structure
 
 ```
-evmore-contracts/
+evmore/
   contracts/                 # Vyper smart contracts
     EvmoreToken.vy           # Core token + mining (627 lines)
     KeccakCollisionVerifier.vy # PoW verification (62 lines)

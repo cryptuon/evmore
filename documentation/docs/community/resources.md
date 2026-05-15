@@ -8,7 +8,7 @@ Connect with the EVMORE community, find help, and contribute to the project.
 
 ### GitHub
 
-**Repository**: [evmore/evmore-contracts](https://github.com/evmore/evmore-contracts)
+**Repository**: [cryptuon/evmore](https://github.com/cryptuon/evmore)
 
 The central hub for EVMORE development:
 - **Source code**: All smart contracts and scripts
@@ -210,16 +210,16 @@ Good help requests include:
 | Resource | Description |
 |----------|-------------|
 | [Mining Guide](../mining/mining-guide.md) | Complete mining guide |
-| [Hardware Guide](../../docs/mining/hardware-efficiency-guide.md) | Hardware recommendations |
+| [Hardware Guide](https://github.com/cryptuon/evmore/blob/main/docs/mining/hardware-efficiency-guide.md) | Hardware recommendations |
 | Mining Pool Docs | Pool-specific guides |
 
 ### For Developers
 
 | Resource | Description |
 |----------|-------------|
-| [Developer Docs](../../docs/developers/README.md) | Technical documentation |
-| [Architecture](../../docs/architecture/digital-gold-architecture.md) | System architecture |
-| [Smart Contracts](../../contracts/) | Contract source code |
+| [Developer Docs](https://github.com/cryptuon/evmore/blob/main/docs/developers/README.md) | Technical documentation |
+| [Architecture](https://github.com/cryptuon/evmore/blob/main/docs/architecture/digital-gold-architecture.md) | System architecture |
+| [Smart Contracts](https://github.com/cryptuon/evmore/tree/main/contracts) | Contract source code |
 
 ### External Resources
 
@@ -348,7 +348,7 @@ EVMORE is built by the community:
 
 | Resource | Link |
 |----------|------|
-| GitHub | [evmore/evmore-contracts](https://github.com/evmore/evmore-contracts) |
+| GitHub | [cryptuon/evmore](https://github.com/cryptuon/evmore) |
 | Discord | [Join Server](#) |
 | Twitter | [@EVMOREGold](#) |
 | Etherscan | [Contract Address](#) |

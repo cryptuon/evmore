@@ -1,8 +1,9 @@
 site_name: EVMORE Documentation
 site_description: "EVMORE: Proof-of-work digital gold built on Ethereum with KeccakCollision mining"
-site_url: https://evmore.github.io/evmore/
-repo_url: https://github.com/evmore/evmore-contracts
-repo_name: evmore/evmore-contracts
+site_url: https://evmore.docs.cryptuon.com/
+repo_url: https://github.com/cryptuon/evmore
+repo_name: cryptuon/evmore
+edit_uri: edit/main/documentation/docs/
 
 theme:
   name: material
@@ -87,7 +88,7 @@ nav:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/evmore/evmore-contracts
+      link: https://github.com/cryptuon/evmore
     - icon: fontawesome/brands/discord
       link: https://discord.gg/evmore
     - icon: fontawesome/brands/x-twitter

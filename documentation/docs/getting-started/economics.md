@@ -292,4 +292,4 @@ Economic impact at different adoption levels:
 - [What is EVMORE?](what-is-evmore.md) - Technical overview
 - [Mining Guide](../mining/mining-guide.md) - Earn EVMORE
 - [FAQ](faq.md) - Common questions
-- [Technical Economics](../../docs/economics/digital-gold-economics.md) - Deep dive
+- [Technical Economics](https://github.com/cryptuon/evmore/blob/main/docs/economics/digital-gold-economics.md) - Deep dive

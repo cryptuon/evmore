@@ -135,8 +135,8 @@ Estimated Performance:
 
 ```bash
 # Clone the EVMORE repository
-git clone https://github.com/evmore/evmore-contracts
-cd evmore-contracts
+git clone https://github.com/cryptuon/evmore
+cd evmore
 
 # Install Python dependencies
 uv sync
@@ -451,9 +451,9 @@ Mining income may be taxable. Keep records of:
 ## Resources
 
 ### Official Resources
-- [Hardware Efficiency Guide](../../docs/mining/hardware-efficiency-guide.md)
-- [Mining Pool Software](../../scripts/mining/mining_pool.py)
-- [Optimized Miner](../../scripts/mining/optimized_miner.py)
+- [Hardware Efficiency Guide](https://github.com/cryptuon/evmore/blob/main/docs/mining/hardware-efficiency-guide.md)
+- [Mining Pool Software](https://github.com/cryptuon/evmore/blob/main/scripts/mining/mining_pool.py)
+- [Optimized Miner](https://github.com/cryptuon/evmore/blob/main/scripts/mining/optimized_miner.py)
 
 ### Community Resources
 - Discord mining channels

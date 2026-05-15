@@ -26,8 +26,8 @@ EVMORE is an open-source project and contributions are welcome. This guide cover
 ### 1. Fork and Clone
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/evmore-contracts
-cd evmore-contracts
+git clone https://github.com/YOUR_USERNAME/evmore
+cd evmore
 uv sync && npm install
 ```
 

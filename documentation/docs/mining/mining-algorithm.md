@@ -12,8 +12,8 @@ Traditional mining (e.g., Bitcoin) asks: *find a nonce such that the hash has le
 
 | Parameter | Value | Description |
 |-----------|-------|-------------|
-| **N** | 16 bits | Number of bits that must match across all hashes |
 | **K** | 4 | Number of values required per solution |
+| **N (difficulty)** | dynamic (initial 8) | Number of bits that must match across all hashes -- set by the token's `currentDifficulty` and adjusted every 2,016 blocks |
 | **Solution size** | 128 bytes | K x 32 bytes per value |
 | **Hash function** | Keccak-256 | Ethereum-native hash |
 
@@ -53,7 +53,7 @@ flowchart TD
     pattern = hash_result & ((1 << difficulty) - 1)  # Extract lowest N bits
     ```
 
-3. **Find 4 matches**: The miner must find 4 different values that all produce the **same** lowest-N-bit pattern. With N=16, each candidate has a 1-in-65,536 chance of matching the target pattern.
+3. **Find 4 matches**: The miner must find 4 different values that all produce the **same** lowest-N-bit pattern (where N is the current difficulty). At the initial difficulty of 8 bits, each candidate has a 1-in-256 chance of matching the target pattern; at 16 bits, a 1-in-65,536 chance.
 
 4. **Order and submit**: The 4 values must be sorted in strictly ascending order (as `uint256`), then concatenated into a 128-byte solution and submitted on-chain.
 
@@ -92,7 +92,7 @@ The network automatically adjusts mining difficulty to maintain a consistent ~10
 | Target block time | 600 seconds (10 minutes) |
 | Adjustment interval | Every 2,016 blocks (~2 weeks) |
 | Maximum change | 4x increase or decrease per interval |
-| Difficulty range | 8 to 32 bits |
+| Minimum difficulty | 8 bits (enforced floor in `_adjust_difficulty`) |
 
 **How it works:**
 
@@ -110,7 +110,7 @@ Unlike Bitcoin, where verification happens at the node level, EVMORE verifies pr
 - **Transparent validation**: Anyone can read the verification logic
 - **No trusted miners**: The blockchain enforces all rules
 
-The verification contract (`KeccakCollisionVerifier.vy`) is only 62 lines and uses precomputed masks for common difficulty levels (8, 16, 24, 32 bits) as a gas optimization.
+The verification contract (`KeccakCollisionVerifier.vy`) is only 62 lines. It computes the difficulty mask inline: for difficulty <= 32 it uses `(1 << difficulty) - 1`; for higher difficulties it falls back to `max_value(uint256) >> (256 - difficulty)`.
 
 ---
 
