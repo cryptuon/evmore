@@ -34,8 +34,8 @@ theme:
     text: Inter
     code: JetBrains Mono
 
-docs_dir: .
-site_dir: ../site
+docs_dir: docs
+site_dir: ../_site
 
 markdown_extensions:
   - pymdownx.superfences:
