@@ -23,6 +23,7 @@ theme:
   features:
     - navigation.tabs
     - navigation.sections
+    - navigation.indexes
     - navigation.expand
     - navigation.top
     - search.suggest
@@ -62,28 +63,30 @@ plugins:
 
 nav:
   - Home: index.md
-  - Getting Started:
-    - What is EVMORE?: getting-started/what-is-evmore.md
-    - Quick Start: getting-started/quick-start.md
-    - Token Economics: getting-started/economics.md
-    - FAQ: getting-started/faq.md
-    - Glossary: getting-started/glossary.md
-    - Troubleshooting: getting-started/troubleshooting.md
-  - Mining:
-    - Mining Guide: mining/mining-guide.md
-    - KeccakCollision Algorithm: mining/mining-algorithm.md
+  - Docs:
+    - Getting Started:
+      - What is EVMORE?: getting-started/what-is-evmore.md
+      - Quick Start: getting-started/quick-start.md
+      - Token Economics: getting-started/economics.md
+      - FAQ: getting-started/faq.md
+      - Glossary: getting-started/glossary.md
+      - Troubleshooting: getting-started/troubleshooting.md
   - Architecture:
     - Overview: architecture/overview.md
     - Staged Deployment: architecture/staged-deployment.md
     - Cross-Chain Bridge: architecture/cross-chain-bridge.md
     - Federated Mining: architecture/federated-mining.md
-  - Smart Contracts:
-    - Contract Reference: contracts/reference.md
-  - Developers:
-    - Getting Started: developers/getting-started.md
-    - Contributing: developers/contributing.md
-  - Community:
-    - Resources: community/resources.md
+    - Smart Contracts:
+      - Contract Reference: contracts/reference.md
+  - Project:
+    - Mining:
+      - Mining Guide: mining/mining-guide.md
+      - KeccakCollision Algorithm: mining/mining-algorithm.md
+    - Developers:
+      - Getting Started: developers/getting-started.md
+      - Contributing: developers/contributing.md
+    - Community:
+      - Resources: community/resources.md
 
 extra:
   social:
