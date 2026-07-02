@@ -1,4 +1,4 @@
-name: drillx-contracts
+name: evmore-contracts
 plugins:
   - name: vyper
   - name: hardhat

@@ -4,6 +4,7 @@ site_url: https://docs.cryptuon.com/evmore/
 repo_url: https://github.com/cryptuon/evmore
 repo_name: cryptuon/evmore
 edit_uri: edit/main/documentation/docs/
+site_author: Cryptuon Research
 
 theme:
   name: material
@@ -89,6 +90,7 @@ nav:
       - Resources: community/resources.md
 
 extra:
+  homepage: https://evmore.cryptuon.com/
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/cryptuon/evmore
@@ -97,4 +99,4 @@ extra:
     - icon: fontawesome/brands/x-twitter
       link: https://twitter.com/EVMOREGold
 
-copyright: Copyright &copy; 2024-2026 EVMORE Contributors
+copyright: Copyright &copy; 2026 Cryptuon Research

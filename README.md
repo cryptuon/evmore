@@ -18,6 +18,10 @@
   <a href="docs/operational/security-assessment.md"><img src="https://img.shields.io/badge/security-audited-blue.svg" alt="Security"></a>
 </p>
 
+<p align="center">
+  <strong><a href="https://evmore.cryptuon.com/">🌐 Site</a> · <a href="https://docs.cryptuon.com/evmore/">📚 Docs</a> · <a href="https://github.com/cryptuon">🔬 Cryptuon Research</a></strong>
+</p>
+
 ---
 
 ## Overview
@@ -96,8 +100,8 @@ EVMORE uses a 4-stage deployment model funded entirely by mining treasury accumu
 
 ```bash
 # Clone and install
-git clone https://github.com/evmore/evmore-contracts
-cd evmore-contracts
+git clone https://github.com/cryptuon/evmore
+cd evmore
 uv sync && npm install
 
 # Compile contracts
@@ -203,6 +207,16 @@ We welcome contributions across smart contracts, mining software, the Vue 3 fron
 ## License
 
 MIT License. See [LICENSE](LICENSE) for details.
+
+---
+
+## Part of Cryptuon Research
+
+`evmore` is one of [20 open-source blockchain-infrastructure projects](https://www.cryptuon.com/projects) from **[Cryptuon Research](https://www.cryptuon.com)** — blockchain theory, shipped as protocols.
+
+**Related projects:** [Zig-EVM](https://zig-evm.cryptuon.com/) · [Tesseract](https://tesseract.cryptuon.com/) · [blockchain-compression](https://blockchain-compression.cryptuon.com/)
+
+Docs: [docs.cryptuon.com/evmore](https://docs.cryptuon.com/evmore/) · Contact: [contact@cryptuon.com](mailto:contact@cryptuon.com)
 
 ---
 

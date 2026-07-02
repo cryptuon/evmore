@@ -1,12 +1,27 @@
 [project]
 name = "evmore-contracts"
 version = "0.1.0"
-description = "EVMORE Digital Gold - KeccakCollision proof-of-work mining contracts"
+description = "A 21M-supply, mineable proof-of-work ERC-20 on Ethereum, powered by KeccakCollision."
 readme = "README.md"
 requires-python = ">=3.12"
+license = { text = "MIT" }
 authors = [
-    { name = "EVM Ore", email = "evmore@cryptuon.com" }
+    { name = "Cryptuon Research", email = "contact@cryptuon.com" }
 ]
+keywords = ["ethereum", "erc20", "proof-of-work", "mining", "token", "defi", "vyper", "keccak"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Office/Business :: Financial",
+]
+
+[project.urls]
+Homepage = "https://evmore.cryptuon.com/"
+Documentation = "https://docs.cryptuon.com/evmore/"
+Repository = "https://github.com/cryptuon/evmore"
 dependencies = [
     "vyper>=0.4.0",
     "eth-ape>=0.8.21",

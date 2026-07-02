@@ -2,6 +2,14 @@
 name = "evmore-dashboard"
 version = "0.1.0"
 edition = "2021"
+description = "Dashboard backend for EVMORE — a 21M-supply, mineable proof-of-work ERC-20 on Ethereum, powered by KeccakCollision."
+authors = ["Cryptuon Research <contact@cryptuon.com>"]
+license = "MIT"
+homepage = "https://evmore.cryptuon.com/"
+documentation = "https://docs.cryptuon.com/evmore/"
+repository = "https://github.com/cryptuon/evmore"
+keywords = ["ethereum", "erc20", "proof-of-work", "mining", "defi"]
+publish = false
 
 [dependencies]
 axum = "0.7"

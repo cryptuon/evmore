@@ -1,17 +1,26 @@
 {
-  "name": "contracts",
+  "name": "evmore-contracts",
   "version": "1.0.0",
-  "description": "KeccakCollision PoW Algorithm",
+  "private": true,
+  "description": "A 21M-supply, mineable proof-of-work ERC-20 on Ethereum, powered by KeccakCollision.",
   "main": "index.js",
+  "homepage": "https://evmore.cryptuon.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cryptuon/evmore.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cryptuon/evmore/issues"
+  },
   "directories": {
     "test": "tests"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["ethereum", "erc20", "proof-of-work", "mining", "token", "defi"],
+  "author": "Cryptuon Research <contact@cryptuon.com>",
+  "license": "MIT",
   "devDependencies": {
     "hardhat": "^2.26.3"
   }
